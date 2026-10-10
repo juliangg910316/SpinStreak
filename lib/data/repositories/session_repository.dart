@@ -20,19 +20,29 @@ class SessionRepository {
   final DateTime Function() _now;
 
   /// Todas las sesiones, de la más reciente a la más antigua.
-  Stream<List<Session>> watchSessions() {
-    final query = _db.select(_db.sessions)
-      ..orderBy([(s) => OrderingTerm.desc(s.fecha)]);
-    return query.watch().map((rows) => rows.map(_toDomain).toList());
+  Future<Result<List<Session>>> getSessions() async {
+    try {
+      final query = _db.select(_db.sessions)
+        ..orderBy([(s) => OrderingTerm.desc(s.fecha)]);
+      final rows = await query.get();
+      return Result.ok(rows.map(_toDomain).toList());
+    } on Exception catch (e) {
+      return Result.error(e);
+    }
   }
 
   /// Días distintos con al menos una sesión (sin hora).
-  Stream<List<DateTime>> watchTrainedDays() {
-    final query = _db.selectOnly(_db.sessions, distinct: true)
-      ..addColumns([_db.sessions.dia]);
-    return query.watch().map(
-      (rows) => rows.map((r) => _parseDay(r.read(_db.sessions.dia)!)).toList(),
-    );
+  Future<Result<List<DateTime>>> getTrainedDays() async {
+    try {
+      final query = _db.selectOnly(_db.sessions, distinct: true)
+        ..addColumns([_db.sessions.dia]);
+      final rows = await query.get();
+      return Result.ok(
+        rows.map((r) => _parseDay(r.read(_db.sessions.dia)!)).toList(),
+      );
+    } on Exception catch (e) {
+      return Result.error(e);
+    }
   }
 
   /// Registra una sesión con la fecha actual.

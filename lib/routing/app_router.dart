@@ -1,7 +1,8 @@
 /// Router con rutas nombradas nativas (`Navigator` + `onGenerateRoute`).
 ///
 /// Cada ruta construye su pantalla dentro de un `BlocProvider` con el Cubit
-/// obtenido de get_it. Los argumentos llegan por `settings.arguments`.
+/// obtenido de get_it, y lanza su primera carga (`cargar()`). Los argumentos
+/// llegan por `settings.arguments`.
 library;
 
 import 'package:flutter/material.dart';
@@ -18,7 +19,7 @@ abstract final class AppRouter {
         RouteNames.home => MaterialPageRoute<void>(
           settings: settings,
           builder: (_) => BlocProvider(
-            create: (_) => getIt<HomeCubit>(),
+            create: (_) => getIt<HomeCubit>()..cargar(),
             child: const HomeScreen(),
           ),
         ),

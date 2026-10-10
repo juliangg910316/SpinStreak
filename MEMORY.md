@@ -16,7 +16,7 @@
 - DI en `lib/config/` (no en `core/di`): la estructura no tiene `core/` en la raíz de `lib/`. `docs/setup/` es histórico.
 - Sin tests por ahora: decisión del autor.
 - Validaciones de negocio en `lib/domain/`, nunca en el formulario ni en el Cubit.
-- Sin streams: el repositorio devuelve `Future<Result<T>>` (`get()` de drift) y los Cubits recargan la vista tras cada acción y al volver de otra pantalla. El autor prefiere el control explícito. El código actual aún usa `watch()`: hay que refactorizarlo.
+- Sin streams: el repositorio devuelve `Future<Result<T>>` (`get()` de drift) y los Cubits recargan la vista tras cada acción y al volver de otra pantalla. El autor prefiere el control explícito. Refactor hecho (2026-10-10): `getSessions()` / `getTrainedDays()` y `HomeCubit.cargar()`, lanzado desde el router con `..cargar()`.
 - Spec-Driven Development: constitución en `docs/constitution.md`; skill `sdd` y comandos `/sdd-*` en `.claude/`. Se retiró `/feature`. `spec.md`, `plan.md` y `tasks.md` llevan `Estado:`; solo pasan a `aprobada` cuando el autor lo dice.
 - `docs/ESPECIFICACION.md` = visión global + requisitos comunes (RC-1 a RC-3). Los RF de cada funcionalidad solo viven en `specs/`. Cada spec define su navegación.
 - 4 specs para el MVP (001 registro, 002 rachas, 003 calendario, 004 récords), para que cada una quepa en ≤10 tareas. Evolución semanal y mensual, y diferencia de odómetro: v2.
@@ -27,7 +27,6 @@
 
 ## Próximos pasos (MVP)
 Todas las specs están en `Estado: borrador`, con dudas `[NECESITA ACLARACIÓN]` pendientes (incluida la navegación).
-- [ ] Refactor sin cambio de comportamiento: pasar `SessionRepository` (`watchSessions`, `watchTrainedDays`) a `Future<Result<T>>` con `get()`, y `HomeCubit` a `cargar()` sin suscripciones.
 - [ ] 001-registro-sesiones: resolver dudas (`/sdd-spec`) → clarify → plan → tasks → implement → validate.
 - [ ] 002-rachas: resolver dudas → validar lo existente → completar lo que falte.
 - [ ] 003-calendario: resolver dudas → flujo completo.

@@ -1,43 +1,39 @@
 /// View model de la pantalla de inicio.
 ///
-/// Escucha los días entrenados del repositorio y los convierte en
+/// Pide los días entrenados al repositorio con [cargar] y los convierte en
 /// [HomeState] usando la lógica del dominio. No contiene reglas de negocio.
 library;
-
-import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../data/repositories/session_repository.dart';
 import '../../../domain/streak_calculator.dart';
+import '../../../utils/result.dart';
 import 'home_state.dart';
 
 class HomeCubit extends Cubit<HomeState> {
-  HomeCubit({
-    required SessionRepository sessionRepository,
-    this._now = DateTime.now,
-  }) : super(const HomeState()) {
-    _subscription = sessionRepository.watchTrainedDays().listen(
-      _onTrainedDays,
-      onError: (Object _) => emit(state.copyWith(status: HomeStatus.error)),
-    );
-  }
+  HomeCubit({required this._sessionRepository, this._now = DateTime.now})
+    : super(const HomeState());
 
+  final SessionRepository _sessionRepository;
   final DateTime Function() _now;
-  late final StreamSubscription<List<DateTime>> _subscription;
 
-  void _onTrainedDays(List<DateTime> days) {
-    emit(
-      state.copyWith(
-        status: HomeStatus.ready,
-        streak: calculateStreak(days, _now()),
-      ),
-    );
-  }
+  /// Carga (o recarga) la racha. Se llama al abrir la pantalla y después de
+  /// cualquier acción que cambie las sesiones.
+  Future<void> cargar() async {
+    final result = await _sessionRepository.getTrainedDays();
+    if (isClosed) return;
 
-  @override
-  Future<void> close() async {
-    await _subscription.cancel();
-    return super.close();
+    switch (result) {
+      case Ok(:final value):
+        emit(
+          state.copyWith(
+            status: HomeStatus.ready,
+            streak: calculateStreak(value, _now()),
+          ),
+        );
+      case Error():
+        emit(state.copyWith(status: HomeStatus.error));
+    }
   }
 }
