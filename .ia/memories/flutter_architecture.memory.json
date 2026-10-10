@@ -1,0 +1,47 @@
+{
+  "kind": "flutter_setup",
+  "version": 1,
+  "state_manager": "Bloc (flutter_bloc): un Cubit por pantalla; Bloc con eventos solo si aporta",
+  "dependency_injection": "get_it",
+  "http_client": "none",
+  "persistence": "drift + drift_flutter (SQLite local)",
+  "routing_strategy": "native_named_routes",
+  "theme_setup": "tema base simple (solo claro, ColorScheme.fromSeed)",
+  "entrypoints_strategy": "solo main.dart",
+  "quality_tools": "flutter_lints + reglas extra (prefer_single_quotes, prefer_const_constructors, prefer_const_declarations, require_trailing_commas, always_declare_return_types, prefer_final_locals), dart format",
+  "test_setup": "none",
+  "extras": "Result<T> (lib/utils/result.dart), intl para formatear fechas y números en español (sin ARB)",
+  "architecture": {
+    "layers": ["ui", "domain", "data", "config", "utils", "routing"],
+    "ui": {
+      "view_model_pattern": "Cubit + estado inmutable en ui/<feature>/view_model; widgets con BlocProvider/BlocBuilder",
+      "themes_path": "lib/ui/core/themes"
+    },
+    "domain": {
+      "models_path": "lib/domain/models",
+      "business_logic": "lib/domain/streak_calculator.dart (funciones puras)"
+    },
+    "data": {
+      "database_path": "lib/data/services/database/app_database.dart",
+      "repositories_path": "lib/data/repositories"
+    },
+    "di": {
+      "init_path": "lib/config/dependencies.dart",
+      "strategy": "get_it: lazy singletons para servicios y repositorios, factories para Cubits"
+    },
+    "network": {
+      "client": "none",
+      "config_path": null
+    },
+    "routing": {
+      "strategy": "native_named_routes",
+      "files": ["lib/routing/route_names.dart", "lib/routing/app_router.dart"]
+    },
+    "config": {
+      "app_config_path": null,
+      "environments": ["main.dart"]
+    }
+  },
+  "notes": "App solo local, sin backend: no hay cliente HTTP ni app_config. getIt<...>() solo se usa en config/dependencies.dart y en los BlocProvider del router; el resto recibe dependencias por constructor. Los repositorios devuelven Future<Result<T>> en lecturas y escrituras; no se usan streams (get() de drift, nunca watch()): los Cubits recargan la vista tras cada acción y al volver de una pantalla que cambia datos (decisión del autor, 2026-10-10). La tabla de sesiones guarda una columna 'dia' (yyyy-MM-dd local) calculada al registrar; es la clave de la racha y del agrupado por día. La fecha la asigna el repositorio (reloj inyectable) y updateSession no la modifica. La fila de drift se llama SessionRow para no chocar con el modelo de dominio Session. Las DI usan 'core/di' en la plantilla, pero se usa lib/config porque la estructura no tiene core en lib.",
+  "generated_at": "2026-10-10T00:00:00Z"
+}

@@ -1,0 +1,25 @@
+/// Inyección de dependencias con get_it.
+///
+/// Único sitio donde se crean servicios, repositorios y Cubits. Solo se llama
+/// a `getIt<...>()` aquí y en los `BlocProvider` del router; el resto de
+/// clases reciben sus dependencias por constructor.
+library;
+
+import 'package:get_it/get_it.dart';
+
+import '../data/repositories/session_repository.dart';
+import '../data/services/database/app_database.dart';
+import '../ui/home/view_model/home_cubit.dart';
+
+final getIt = GetIt.instance;
+
+void setupDependencies() {
+  getIt
+    // Servicios y repositorios: una instancia, creada al primer uso.
+    ..registerLazySingleton<AppDatabase>(AppDatabase.new)
+    ..registerLazySingleton<SessionRepository>(
+      () => SessionRepository(database: getIt()),
+    )
+    // Cubits: uno nuevo por pantalla; BlocProvider se encarga de cerrarlo.
+    ..registerFactory<HomeCubit>(() => HomeCubit(sessionRepository: getIt()));
+}
