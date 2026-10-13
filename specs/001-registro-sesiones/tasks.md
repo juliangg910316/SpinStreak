@@ -37,7 +37,7 @@ No se crean tests (decisión del autor).
     - instalar sobre la versión anterior conserva las sesiones (32,6 pasa a 33, el resto de datos igual);
     - pasa la puerta.
 
-- [ ] **T4. Validación de sesiones en `domain`.** — RF-3, RF-4, RF-6, RF-7, RF-14
+- [x] **T4. Validación de sesiones en `domain`.** — RF-3, RF-4, RF-6, RF-7, RF-14
   - `@freezed EntradaSesion` en `domain/models/`.
   - En `session_validator.dart`:
     - constantes de rango;
