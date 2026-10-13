@@ -24,12 +24,19 @@ alwaysApply: true
 - **Dart moderno (SDK ^3.13)**: usar `switch` expressions y patrones, `sealed`/`final class`, records, dot shorthands (`.fromSeed`) y parámetros con nombre privados (`this._campo`).
 - **Async**: `async`/`await` en lugar de `.then()`. Cancelar `StreamSubscription` en `close()`/`dispose()`. Capturar `on Exception`, no `catch` genérico.
 - **Clases utilitarias**: `abstract final class` con miembros `static` (ver `AppTheme`, `RouteNames`).
+- **Modelos y estados con freezed** (freezed 3+):
+  - Clase de datos: `@freezed abstract class X with _$X { const factory X({...}) = _X; }` con `part 'x.freezed.dart';`.
+  - Con getters o métodos propios: añadir `const X._();`.
+  - Uniones: `@freezed sealed class X with _$X` con un `factory` por caso; se consumen con `switch` y patrones (no hay `when` ni `map`).
+  - Las colecciones de una clase freezed son no modificables y se comparan por contenido.
+  - Los enums siguen siendo enums. `Result<T>` (`lib/utils/`) no es un modelo y sigue siendo una `sealed class` manual.
 - **Documentación**: `///` al inicio de cada archivo (`library;`) explicando el papel del archivo en su capa, y en APIs públicas no obvias. Comentarios en español.
 - **Logs**: prohibido `print` (`avoid_print`). Para depuración temporal, `debugPrint`; no dejar logs de datos del usuario.
 
 ## Anti-patrones
 
-- Código generado editado a mano (`*.g.dart`): se regenera con `dart run build_runner build`.
+- Código generado editado a mano (`*.g.dart`, `*.freezed.dart`): se regenera con `dart run build_runner build`.
+- `copyWith`, `==` o `hashCode` escritos a mano en modelos o estados: usar `@freezed`.
 - `late` sin necesidad o para evitar pensar en la nulabilidad.
 - Funciones de más de ~40 líneas o widgets con `build()` gigante: extraer widgets privados (`_StatTile`).
 - Lógica en métodos `static` de widgets o en extensiones sobre tipos de Flutter.

@@ -23,11 +23,11 @@
 - Lo ya implementado se documenta y se valida, no se rehace: la spec 002 (`StreakCalculator` e inicio) y parte de la 001 (el repositorio ya tiene alta, edición y borrado, y conserva la fecha al editar).
 
 ## Errores a evitar
-- (vacío)
+- Las comprobaciones con `flutter run` necesitan un dispositivo o emulador Android encendido: comprobarlo con `flutter devices` antes de dar por hecho un "Hecho cuando" visual.
 
 ## Próximos pasos (MVP)
 Todas las specs están en `Estado: borrador`, con dudas `[NECESITA ACLARACIÓN]` pendientes (incluida la navegación).
-- [ ] 001-registro-sesiones: resolver dudas (`/sdd-spec`) → clarify → plan → tasks → implement → validate.
+- [ ] 001-registro-sesiones: spec **aprobada** (2026-10-12) → plan en borrador (2026-10-12; propone `Duration` en vez de `DateTime` para el tiempo, pendiente de confirmar; schemaVersion 2 con velocidad máxima entera redondeada; 2026-10-13: `freezed` en todos los modelos y estados) → **plan aprobado** y constitución actualizada (principio 1 con freezed, 2026-10-13) → **tasks aprobadas** (10 tareas, 2026-10-13) → implement: T1 hecha (2026-10-13: freezed instalado, `*.freezed.dart` excluido del análisis, AGENTS.md, reglas y memoria de arquitectura actualizados). T2 hecha (2026-10-13: `Streak` movido a `domain/models/streak.dart` con freezed; `HomeState` con freezed y `@Default`; APK compila; **pendiente que el autor confirme en un dispositivo** que el inicio muestra los mismos contadores, porque no había ninguno conectado). Siguiente: T3. → tasks → implement → validate. Decidido: rangos por campo; tiempo con selector h/m/s (el autor quiere DateTime + widgets propios: decidir en el plan); velocidad máxima, pulso y calorías enteros; distancia y odómetro hasta 2 decimales; odómetro solo valida rango (se quitó el aviso de odómetro menor, 2026-10-12); editar/borrar cualquier sesión, totales por día en el historial, navegación desde el inicio (botón flotante + botón "Historial"), sin barra inferior.
 - [ ] 002-rachas: resolver dudas → validar lo existente → completar lo que falte.
 - [ ] 003-calendario: resolver dudas → flujo completo.
 - [ ] 004-records: resolver dudas → flujo completo.

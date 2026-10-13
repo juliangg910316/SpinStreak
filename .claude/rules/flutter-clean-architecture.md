@@ -23,7 +23,8 @@ paths:
 
 - `ui` importa `domain` y `data/repositories`; **nunca** `data/services` ni drift.
 - `data/repositories` importa `domain`, `data/services` y `utils`.
-- `domain` no importa nada de `ui`, `data`, Flutter ni paquetes externos (solo `dart:`).
+- `domain` no importa nada de `ui`, `data`, Flutter ni paquetes externos: solo `dart:` y `package:freezed_annotation`.
+- Los modelos de `domain/models/` son clases `@freezed` (ver `dart-coding-standards.md`).
 - Las filas de drift (`SessionRow`, `SessionsCompanion`) **solo existen en `data/`**: el repositorio las convierte a modelos de dominio.
 - Los repositorios devuelven `Future<Result<T>>` en lecturas y escrituras; no lanzan excepciones hacia la UI. Las lecturas usan `get()` de drift, **nunca `watch()` ni `Stream`**: las vistas se recargan después de cada acción.
 - Repositorios como clase concreta; crear contrato abstracto solo si hay dos implementaciones reales o se necesita un fake.
@@ -48,6 +49,6 @@ paths:
 ## Checklist
 
 - [ ] Ningún import de `data/services` o `package:drift` desde `lib/ui/`.
-- [ ] `lib/domain/` sin imports de Flutter ni paquetes.
+- [ ] `lib/domain/` sin imports de Flutter ni paquetes (salvo `freezed_annotation`).
 - [ ] Repositorio convierte filas → modelos y envuelve errores en `Result`.
 - [ ] Nueva regla de negocio con su función pura en `domain/`.

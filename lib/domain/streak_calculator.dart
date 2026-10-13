@@ -4,25 +4,7 @@
 /// probarlas con tests unitarios.
 library;
 
-/// Resumen de la racha del usuario.
-class Streak {
-  const Streak({
-    required this.current,
-    required this.best,
-    required this.totalDays,
-  });
-
-  static const empty = Streak(current: 0, best: 0, totalDays: 0);
-
-  /// Días consecutivos entrenados que terminan hoy o ayer.
-  final int current;
-
-  /// Racha más larga histórica.
-  final int best;
-
-  /// Total de días distintos con al menos una sesión.
-  final int totalDays;
-}
+import 'models/streak.dart';
 
 /// Calcula la racha a partir de los días entrenados.
 ///

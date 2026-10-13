@@ -11,10 +11,11 @@
   "quality_tools": "flutter_lints + reglas extra (prefer_single_quotes, prefer_const_constructors, prefer_const_declarations, require_trailing_commas, always_declare_return_types, prefer_final_locals), dart format",
   "test_setup": "none",
   "extras": "Result<T> (lib/utils/result.dart), intl para formatear fechas y números en español (sin ARB)",
+  "immutability": "freezed (freezed_annotation ^3.1.0, freezed ^4.0.2 dev): todos los modelos de domain/models y todos los estados de Cubit; uniones sealed consumidas con switch; *.freezed.dart excluido del análisis (decisión del autor, 2026-10-13)",
   "architecture": {
     "layers": ["ui", "domain", "data", "config", "utils", "routing"],
     "ui": {
-      "view_model_pattern": "Cubit + estado inmutable en ui/<feature>/view_model; widgets con BlocProvider/BlocBuilder",
+      "view_model_pattern": "Cubit + estado @freezed (enum status) en ui/<feature>/view_model; widgets con BlocProvider/BlocBuilder",
       "themes_path": "lib/ui/core/themes"
     },
     "domain": {

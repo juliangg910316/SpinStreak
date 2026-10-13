@@ -2,13 +2,13 @@
 App Flutter solo para Android y de uso personal: registra a diario las sesiones de bicicleta estática y motiva con la racha de días consecutivos. Proyecto de portafolio. Principios innegociables en `docs/constitution.md` (stack, spec, capas, datos e idioma); visión en `docs/ESPECIFICACION.md`; requisitos en `specs/`.
 
 ## Stack y estructura
-- Flutter (Dart `^3.13.3`) · `flutter_bloc` (un Cubit por pantalla) · `get_it` · `drift` (SQLite local) · `intl` (es) · rutas nombradas nativas.
+- Flutter (Dart `^3.13.3`) · `flutter_bloc` (un Cubit por pantalla) · `get_it` · `drift` (SQLite local) · `intl` (es) · `freezed` (todos los modelos de dominio y estados de Cubit) · rutas nombradas nativas.
 - Capas: `lib/ui/<feature>/{view_model,widgets}` → `lib/domain/` (modelos, lógica pura y validaciones) → `lib/data/{repositories,services/database}`. DI en `lib/config/`, rutas en `lib/routing/`. Detalle por tema en `.claude/rules/`.
 
 ## Comandos
 ```bash
 flutter pub get
-dart run build_runner build   # tras cambiar tablas de drift
+dart run build_runner build   # tras cambiar tablas de drift o clases @freezed
 dart format .
 flutter analyze
 flutter run
@@ -29,10 +29,10 @@ flutter run
 ## Límites
 - **Siempre:** respetar las capas; `getIt` solo en `config/` y en el router; el repositorio devuelve `Future<Result<T>>` (sin streams ni `watch()`); las vistas se recargan tras cada acción.
 - **Pregunta antes:** añadir dependencias, cambiar la arquitectura, modificar tablas de drift, crear tests.
-- **Nunca:** editar `*.g.dart` a mano, añadir backend o HTTP, permitir fechas pasadas, hacer commits sin que se pida.
+- **Nunca:** editar `*.g.dart` ni `*.freezed.dart` a mano, añadir backend o HTTP, permitir fechas pasadas, hacer commits sin que se pida.
 
 ## Verificación
-- `dart format .` sin cambios y `flutter analyze` sin errores ni avisos; si cambian tablas, migración + `build_runner`.
+- `dart format .` sin cambios y `flutter analyze` sin errores ni avisos; si cambian tablas, migración + `build_runner`; si cambia una clase `@freezed`, `build_runner`.
 - Recorrido manual en el emulador o dispositivo Android con `flutter run`.
 
 ## Memoria

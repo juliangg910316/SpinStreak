@@ -42,12 +42,12 @@ Los datos de la pantalla de la bici se pierden al apagarla. Las apps generalista
 | Campo | Tipo | Unidad | Notas |
 | --- | --- | --- | --- |
 | `fecha` | DateTime | — | La asigna la app (ahora). El **día** es la clave para la racha |
-| `tiempo` | Duration | hh:mm:ss | Obligatorio |
-| `distancia` | double | km | Obligatorio |
+| `tiempo` | Duration | hh:mm:ss | Obligatorio. Se elige con un selector de horas, minutos y segundos |
+| `distancia` | double | km | Obligatorio. Hasta 2 decimales |
 | `calorias` | int | kcal | Obligatorio. Estimación de la bici |
-| `odometro` | double | km | Obligatorio. Total acumulado de la bici |
-| `velocidadMax` | double? | km/h | Opcional |
-| `pulsoMax` | int? | ppm | Opcional |
+| `odometro` | double | km | Obligatorio. Total acumulado de la bici. Hasta 2 decimales |
+| `velocidadMax` | int? | km/h | Opcional. Entero |
+| `pulsoMax` | int? | ppm | Opcional. Entero |
 | `nota` | String? | — | Opcional |
 
 **Datos derivados (v1):** velocidad media = distancia / tiempo. Se calculan, no se almacenan.

@@ -16,8 +16,8 @@ paths:
 
 - **Cubit por defecto**: métodos públicos con verbos (`guardar()`, `editar()`). Usar `Bloc` con eventos solo si el flujo tiene muchas acciones o necesita transformadores (debounce, etc.).
 - **Archivos**: `<feature>_cubit.dart` y `<feature>_state.dart` en el mismo `view_model/`.
-- **Estado inmutable**: campos `final`, constructor `const`, `copyWith` para cambios. Estado inicial con valores por defecto (`const HomeState()`).
-- **Loading/error/success**: un `enum <Feature>Status { loading, ready, error }` en el estado (patrón actual), o una `sealed class` si cada caso lleva datos distintos.
+- **Estado inmutable con freezed**: cada estado es `@freezed abstract class <Feature>State with _$<Feature>State` con `const factory` y valores por defecto (`@Default(...)`), de modo que el estado inicial sea `const <Feature>State()`. Los cambios usan el `copyWith` generado; nunca `copyWith`, `==` ni `hashCode` escritos a mano.
+- **Loading/error/success**: un `enum <Feature>Status { loading, ready, error }` como campo del estado (patrón actual). Una unión freezed `sealed` solo si cada caso lleva datos distintos y no hay que conservar datos entre casos.
 - **Carga de datos (sin streams)**: el Cubit tiene un método `cargar()` que pide los datos al repositorio (`Future<Result<T>>`), hace `switch` sobre el `Result` y emite el estado. No se usan streams ni suscripciones.
 - **Escrituras**: el Cubit llama al repositorio, hace `switch` sobre el `Result`, emite el estado correspondiente y, si la acción tuvo éxito, vuelve a llamar a `cargar()`.
 - **Volver de otra pantalla**: si una pantalla abre otra que puede cambiar datos (p. ej. el formulario de sesión), espera a que se cierre (`await Navigator.pushNamed(...)`) y llama a `cargar()` de su Cubit.
@@ -38,7 +38,7 @@ paths:
 
 ## Checklist
 
-- [ ] Estado inmutable con `copyWith` y estado inicial `const`.
+- [ ] Estado `@freezed` con estado inicial `const` y `copyWith` generado.
 - [ ] Casos de carga y error representados en el estado y pintados en la UI.
 - [ ] La vista se recarga (`cargar()`) tras cada acción con éxito y al volver de una pantalla que cambia datos.
 - [ ] Cubit registrado como `registerFactory` en `dependencies.dart`.
