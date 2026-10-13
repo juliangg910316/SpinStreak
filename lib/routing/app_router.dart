@@ -9,8 +9,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../config/dependencies.dart';
+import '../domain/models/session.dart';
+import '../ui/history/view_model/history_cubit.dart';
+import '../ui/history/widgets/history_screen.dart';
 import '../ui/home/view_model/home_cubit.dart';
 import '../ui/home/widgets/home_screen.dart';
+import '../ui/session_form/view_model/session_form_cubit.dart';
+import '../ui/session_form/view_model/session_form_state.dart';
+import '../ui/session_form/widgets/session_form_screen.dart';
 import 'route_names.dart';
 
 abstract final class AppRouter {
@@ -21,6 +27,21 @@ abstract final class AppRouter {
           builder: (_) => BlocProvider(
             create: (_) => getIt<HomeCubit>()..cargar(),
             child: const HomeScreen(),
+          ),
+        ),
+        RouteNames.sessionForm => MaterialPageRoute<SessionFormStatus>(
+          settings: settings,
+          builder: (_) => BlocProvider(
+            create: (_) =>
+                getIt<SessionFormCubit>(param1: settings.arguments as Session?),
+            child: const SessionFormScreen(),
+          ),
+        ),
+        RouteNames.history => MaterialPageRoute<void>(
+          settings: settings,
+          builder: (_) => BlocProvider(
+            create: (_) => getIt<HistoryCubit>()..cargar(),
+            child: const HistoryScreen(),
           ),
         ),
         _ => null,

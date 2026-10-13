@@ -49,7 +49,7 @@ No se crean tests (decisión del autor).
     - `domain/` solo importa `dart:` y `freezed_annotation`;
     - pasa la puerta.
 
-- [ ] **T5. Agrupado del historial y formatos.** — RF-9, RF-10, RF-11, RC-3
+- [x] **T5. Agrupado del historial y formatos.** — RF-9, RF-10, RF-11, RC-3
   - `@freezed DiaHistorial` en `domain/models/`.
   - `agruparPorDia(sesiones)` en `domain/session_history.dart`: agrupa por `dia`, ordena por `fecha` desc e `id` desc, y suma distancia, tiempo y calorías.
   - `lib/utils/formatters.dart` con los formatos de la tabla del plan (fecha, hora, `H:mm:ss`, km, km/h y kcal).
@@ -58,12 +58,12 @@ No se crean tests (decisión del autor).
     - los formatos producen los ejemplos de la tabla del plan;
     - pasa la puerta.
 
-- [ ] **T6. Selector de tiempo y ayuda ⓘ.** — RF-5, RF-8
+- [x] **T6. Selector de tiempo y ayuda ⓘ.** — RF-5, RF-8
   - `TiempoPicker`: hoja inferior con tres `CupertinoPicker` (0–5 h, 0–59 min, 0–59 s) que devuelve un `Duration`. Con 5 h fija los minutos y segundos a 0.
   - `AyudaParametro`: botón ⓘ con un diálogo que muestra el texto del glosario de los seis parámetros.
   - Hecho cuando: los dos widgets compilan y no dependen de ningún Cubit; los textos coinciden con la sección 5 de `docs/ESPECIFICACION.md`; pasa la puerta.
 
-- [ ] **T7. Estado y Cubit del formulario.** — RF-1, RF-3 a RF-7, RF-14, RF-15, RF-16, RC-1
+- [x] **T7. Estado y Cubit del formulario.** — RF-1, RF-3 a RF-7, RF-14, RF-15, RF-16, RC-1
   - `@freezed SessionFormState`: modo, original, entrada, entrada inicial, errores, status y el getter `hayCambios`.
   - `SessionFormCubit`, con estos métodos:
     - `cambiarCampo` y `cambiarTiempo`;
@@ -76,7 +76,7 @@ No se crean tests (decisión del autor).
     - el Cubit no importa Flutter ni drift y no calcula reglas;
     - pasa la puerta.
 
-- [ ] **T8. Pantalla del formulario y su ruta.** — RF-2, RF-3, RF-4, RF-5, RF-8, RF-13, RF-15, RF-16
+- [x] **T8. Pantalla del formulario y su ruta.** — RF-2, RF-3, RF-4, RF-5, RF-8, RF-13, RF-15, RF-16
   - `SessionFormScreen`:
     - campos con su teclado y su ⓘ, y errores bajo cada campo;
     - el campo de tiempo abre `TiempoPicker`;
@@ -85,8 +85,9 @@ No se crean tests (decisión del autor).
     - `BlocListener`: hace `pop(resultado)` en los estados finales y muestra un `SnackBar` si hay error.
   - Ruta `sessionForm` en `route_names.dart` y en `app_router.dart`.
   - Hecho cuando: en `flutter run`, navegando a la ruta a mano, se cumplen los pasos 2 a 5 y 9 del recorrido del plan (sección 9); pasa la puerta.
+  - Nota (2026-10-13): pasa la puerta. La comprobación en el móvil se **pospone a T10** por decisión del autor, porque el inicio aún no tiene el botón para abrir el formulario. Los pasos 2 a 5 y 9 forman parte del recorrido completo de T10.
 
-- [ ] **T9. Historial: estado, Cubit, pantalla, ruta y acceso a la edición.** — RF-9 a RF-13, RC-2
+- [x] **T9. Historial: estado, Cubit, pantalla, ruta y acceso a la edición.** — RF-9 a RF-13, RC-2
   - `@freezed HistoryState` y `HistoryCubit.cargar()` (`getSessions` → `agruparPorDia`), registrado en DI.
   - `HistoryScreen`:
     - cabeceras con totales y filas con hora, tiempo, distancia, velocidad media y kcal;
@@ -94,6 +95,7 @@ No se crean tests (decisión del autor).
     - al tocar una fila, `await pushNamed(sessionForm, arguments: session)`, después `cargar()` y el `SnackBar` "Sesión actualizada" o "Sesión borrada".
   - Ruta `history`.
   - Hecho cuando: en `flutter run` se cumplen los pasos 7, 8, 10 y 11 del recorrido del plan; pasa la puerta.
+  - Nota (2026-10-13): pasa la puerta. La comprobación en el móvil se **pospone a T10** con el mismo criterio que T8, porque el historial solo se abre desde el inicio. Los pasos 7, 8, 10 y 11 forman parte del recorrido completo de T10.
 
 - [ ] **T10. Navegación desde el inicio y recorrido completo.** — RF-1, RC-3 (navegación de la spec)
   - En `HomeScreen`:

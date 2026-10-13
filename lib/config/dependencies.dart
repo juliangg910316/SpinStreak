@@ -9,7 +9,10 @@ import 'package:get_it/get_it.dart';
 
 import '../data/repositories/session_repository.dart';
 import '../data/services/database/app_database.dart';
+import '../domain/models/session.dart';
+import '../ui/history/view_model/history_cubit.dart';
 import '../ui/home/view_model/home_cubit.dart';
+import '../ui/session_form/view_model/session_form_cubit.dart';
 
 final getIt = GetIt.instance;
 
@@ -21,5 +24,13 @@ void setupDependencies() {
       () => SessionRepository(database: getIt()),
     )
     // Cubits: uno nuevo por pantalla; BlocProvider se encarga de cerrarlo.
-    ..registerFactory<HomeCubit>(() => HomeCubit(sessionRepository: getIt()));
+    ..registerFactory<HomeCubit>(() => HomeCubit(sessionRepository: getIt()))
+    ..registerFactory<HistoryCubit>(
+      () => HistoryCubit(sessionRepository: getIt()),
+    )
+    // Formulario: `param1` es la sesión a editar, o null para una nueva.
+    ..registerFactoryParam<SessionFormCubit, Session?, void>(
+      (original, _) =>
+          SessionFormCubit(sessionRepository: getIt(), original: original),
+    );
 }
