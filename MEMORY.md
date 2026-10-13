@@ -34,8 +34,12 @@
 ## Próximos pasos (MVP)
 - [x] 001-registro-sesiones: **implementada** (2026-10-13).
 - [ ] Commit del trabajo de la spec 001 (cuando el autor lo pida).
-- [ ] 002-rachas: resolver dudas (`/sdd-spec`) → validar lo existente → completar. Ojo:
-  - la navegación del inicio ya la fija la 001 (botón flotante + "Historial");
-  - su RF-8 ("contadores a 0" sin sesiones) choca con RC-2 (mensaje para empezar).
-- [ ] 003-calendario: resolver dudas → flujo completo. Ojo: "calendario vacío" sin sesiones choca con RC-2.
+- Specs 002, 003 y 004 actualizadas con lo fijado en la 001 (2026-10-13): día fijado al registrar y que no cambia al editar, navegación ya existente del inicio, formatos y tipos de los valores, y `dart format` en los criterios. Los choques (navegación, RC-2 sin sesiones, editar desde el calendario, aviso de récord tras "Sesión guardada") quedaron como `[NECESITA ACLARACIÓN]`, sin decidir.
+- [ ] 002-rachas: spec **aprobada** (2026-10-13). Decidido:
+  - navegación con botones "Historial", "Calendario" y "Récords" bajo los contadores (sin barra inferior; la 001 no cambia);
+  - un único "mensaje del día" en el inicio: bienvenida sin sesiones (además de contadores a 0), riesgo, "racha a salvo" o ánimo con la mejor racha;
+  - recalcular al volver la app al primer plano.
+
+  Siguiente: plan (partiendo de lo ya implementado) → tasks → implement → validate.
+- [ ] 003-calendario: resolver dudas → flujo completo.
 - [ ] 004-records: resolver dudas → flujo completo.
