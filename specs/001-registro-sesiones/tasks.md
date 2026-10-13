@@ -97,10 +97,16 @@ No se crean tests (decisión del autor).
   - Hecho cuando: en `flutter run` se cumplen los pasos 7, 8, 10 y 11 del recorrido del plan; pasa la puerta.
   - Nota (2026-10-13): pasa la puerta. La comprobación en el móvil se **pospone a T10** con el mismo criterio que T8, porque el historial solo se abre desde el inicio. Los pasos 7, 8, 10 y 11 forman parte del recorrido completo de T10.
 
-- [ ] **T10. Navegación desde el inicio y recorrido completo.** — RF-1, RC-3 (navegación de la spec)
+- [x] **T10. Navegación desde el inicio y recorrido completo.** — RF-1, RC-3 (navegación de la spec)
   - En `HomeScreen`:
     - `FloatingActionButton.extended` "Registrar sesión" y botón "Historial";
     - `await pushNamed` y después `cargar()`;
     - `SnackBar` "Sesión guardada".
   - Actualizar `MEMORY.md`.
   - Hecho cuando: el autor ejecuta en Android los 12 pasos del recorrido del plan (sección 9) y confirma el resultado; pasa la puerta.
+
+- [x] **T11. Traducciones de Flutter en español (añadida en la validación, 2026-10-13).** — RC-3
+  - Añadir `flutter_localizations` (`sdk: flutter`) a `pubspec.yaml`.
+  - En `MaterialApp` (`main.dart`): `localizationsDelegates` (`GlobalMaterialLocalizations`, `GlobalWidgetsLocalizations`, `GlobalCupertinoLocalizations`), `supportedLocales: [Locale('es')]` y `locale: Locale('es')`.
+  - Actualizar el stack de `AGENTS.md`.
+  - Hecho cuando: en el móvil, al mantener pulsado un texto del campo "Nota", el menú sale en español ("Cortar", "Copiar", "Pegar"…); el resto de la app sigue igual; pasa la puerta.

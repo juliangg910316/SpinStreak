@@ -1,5 +1,5 @@
 # Spec 001 — Registro de sesiones
-Estado: aprobada
+Estado: implementada
 
 ## Contexto y objetivo
 Los datos de la pantalla de la bici estática se pierden al apagarla. El usuario necesita copiarlos a la app al terminar cada sesión, de forma rápida, y poder consultarlos, corregirlos o borrarlos después. Es la base de todo lo demás: rachas, calendario y récords leen estos datos.

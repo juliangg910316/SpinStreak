@@ -1,34 +1,41 @@
 # MEMORY.md -- SpinStreak
 
-## Estado actual (2026-10-10)
-- Esqueleto de arquitectura creado: DI, router, base de datos drift, `SessionRepository`, `StreakCalculator` y `Result<T>`.
-- Solo existe la pantalla de inicio (racha).
-- Sin tests (`test/` no existe). Repositorio git creado, sin commits todavía.
-- Documentación revisada y alineada el 2026-10-10 (contradicciones corregidas).
+## Estado actual (2026-10-13)
+- **Spec 001 (registro de sesiones): `implementada`** (11 tareas; validada el 2026-10-13). Hay formulario de alta y edición, selector de tiempo, ayuda ⓘ, historial por día con totales, borrado con confirmación y navegación desde el inicio.
+- Base de datos en `schemaVersion` 2 (velocidad máxima entera, migración verificada en el móvil).
+- Sin tests (`test/` no existe). Git: 2 commits; **todo el trabajo de la spec 001 está sin commitear**.
 
 ## Decisiones (y por qué)
 - Solo Android, uso personal y datos solo locales: es una app personal y no necesita backend.
 - Racha estrictamente diaria, sin comodines: así lo decidió el autor.
 - No se registran días pasados: evita "rellenar" una racha rota. **Riesgo aceptado**: una sesión sin registrar o borrada por error rompe la racha sin remedio.
 - Sin copia de seguridad hasta la v2: **riesgo aceptado** de perder datos al desinstalar o cambiar de móvil.
-- Columna `dia` en hora local (`yyyy-MM-dd`) calculada al registrar: es la clave de la racha y del agrupado por día.
+- Columna `dia` en hora local (`yyyy-MM-dd`) calculada al registrar: es la clave de la racha y del agrupado del historial.
 - Fila de drift `SessionRow`: evita el choque de nombres con el modelo de dominio `Session`.
-- DI en `lib/config/` (no en `core/di`): la estructura no tiene `core/` en la raíz de `lib/`. `docs/setup/` es histórico.
+- DI en `lib/config/` (no en `core/di`). `docs/setup/` es histórico.
 - Sin tests por ahora: decisión del autor.
-- Validaciones de negocio en `lib/domain/`, nunca en el formulario ni en el Cubit.
-- Sin streams: el repositorio devuelve `Future<Result<T>>` (`get()` de drift) y los Cubits recargan la vista tras cada acción y al volver de otra pantalla. El autor prefiere el control explícito. Refactor hecho (2026-10-10): `getSessions()` / `getTrainedDays()` y `HomeCubit.cargar()`, lanzado desde el router con `..cargar()`.
-- Spec-Driven Development: constitución en `docs/constitution.md`; skill `sdd` y comandos `/sdd-*` en `.claude/`. Se retiró `/feature`. `spec.md`, `plan.md` y `tasks.md` llevan `Estado:`; solo pasan a `aprobada` cuando el autor lo dice.
-- `docs/ESPECIFICACION.md` = visión global + requisitos comunes (RC-1 a RC-3). Los RF de cada funcionalidad solo viven en `specs/`. Cada spec define su navegación.
-- 4 specs para el MVP (001 registro, 002 rachas, 003 calendario, 004 récords), para que cada una quepa en ≤10 tareas. Evolución semanal y mensual, y diferencia de odómetro: v2.
-- Lo ya implementado se documenta y se valida, no se rehace: la spec 002 (`StreakCalculator` e inicio) y parte de la 001 (el repositorio ya tiene alta, edición y borrado, y conserva la fecha al editar).
+- Validaciones de negocio en `lib/domain/` (`validarSesion`), nunca en el formulario ni en el Cubit.
+- Sin streams: el repositorio devuelve `Future<Result<T>>` y los Cubits recargan (`cargar()`) tras cada acción y al volver de otra pantalla. El autor prefiere el control explícito.
+- `freezed` en todos los modelos de dominio y estados de Cubit (estado = clase freezed + enum `status`). Constitución actualizada (principio 1), 2026-10-13.
+- Tiempo como `Duration` (no `DateTime`): representa una duración y los totales pueden pasar de 24 h. Se elige con un selector propio (`CupertinoPicker`, máx. 05:00:00).
+- Entrada numérica: coma o punto decimal, sin separador de miles ("1.234,5" no es válido; ",5" = 0,5). Se muestran todos los errores a la vez.
+- `flutter_localizations` + `locale: es`: RC-3 también exige en español los textos propios de Flutter (aprobado el 2026-10-13).
+- Spec-Driven Development: constitución en `docs/constitution.md`; skill `sdd` y comandos `/sdd-*`. `spec.md`, `plan.md` y `tasks.md` solo pasan a `aprobada` cuando el autor lo dice.
+- `docs/ESPECIFICACION.md` = visión global + requisitos comunes (RC-1 a RC-3). Los RF de cada funcionalidad solo viven en `specs/`.
+- 4 specs para el MVP (001 registro, 002 rachas, 003 calendario, 004 récords). Evolución semanal y mensual, y diferencia de odómetro: v2.
 
 ## Errores a evitar
-- Las comprobaciones con `flutter run` necesitan un dispositivo o emulador Android encendido: comprobarlo con `flutter devices` antes de dar por hecho un "Hecho cuando" visual.
-- Probar migraciones sin tocar datos reales: copiar la BD del móvil (`adb exec-out run-as com.juliangg.spin_streak cat app_flutter/spinstreak.sqlite`), meter una BD de prueba, instalar con `adb install -r`, abrir, traer la BD, inspeccionarla con `node:sqlite` y restaurar el original. En Git Bash usar `MSYS_NO_PATHCONV=1` o las rutas del móvil (`/data/local/tmp`) se convierten en rutas de Windows.
+- No controlar el móvil del autor con `adb shell input` (toques y texto a ciegas): otra app puede pasar a primer plano y recibir la entrada. Para comprobaciones visuales, pedírselas al autor; `adb` solo para instalar, capturar pantalla o leer la BD.
+- RC-3 incluye los textos propios de Flutter/Material: `intl` no basta. Revisarlo en cada plan.
+- Antes de un "Hecho cuando" visual, comprobar con `flutter devices` que hay un dispositivo Android.
+- Probar migraciones sin tocar datos reales: copiar la BD del móvil (`adb exec-out run-as com.juliangg.spin_streak cat app_flutter/spinstreak.sqlite`), meter una BD de prueba, instalar con `adb install -r`, abrir, traer la BD, inspeccionarla con `node:sqlite` y restaurar el original. En Git Bash usar `MSYS_NO_PATHCONV=1`.
+- Si una tarea solo se puede probar desde una pantalla que aún no existe, decidir con el autor si se pospone la comprobación (se hizo en T8 y T9, verificadas en T10).
 
 ## Próximos pasos (MVP)
-Todas las specs están en `Estado: borrador`, con dudas `[NECESITA ACLARACIÓN]` pendientes (incluida la navegación).
-- [ ] 001-registro-sesiones: spec **aprobada** (2026-10-12) → plan en borrador (2026-10-12; propone `Duration` en vez de `DateTime` para el tiempo, pendiente de confirmar; schemaVersion 2 con velocidad máxima entera redondeada; 2026-10-13: `freezed` en todos los modelos y estados) → **plan aprobado** y constitución actualizada (principio 1 con freezed, 2026-10-13) → **tasks aprobadas** (10 tareas, 2026-10-13) → implement: T1 hecha (2026-10-13: freezed instalado, `*.freezed.dart` excluido del análisis, AGENTS.md, reglas y memoria de arquitectura actualizados). T2 hecha (2026-10-13: `Streak` movido a `domain/models/streak.dart` con freezed; `HomeState` con freezed y `@Default`; APK compila; **pendiente que el autor confirme en un dispositivo** que el inicio muestra los mismos contadores, porque no había ninguno conectado). T3 hecha (2026-10-13: `Session` freezed con `dia` y `velocidadMax: int?`, `SessionData`, `schemaVersion` 2 con migración verificada en el móvil: 32,6→33, 32,4→32, NULL→NULL, 3/3 filas conservadas; BD original restaurada). T4 hecha (2026-10-13: `EntradaSesion`, `validarSesion` con uniones freezed `ErrorCampo`/`ResultadoValidacion`; 28 casos comprobados con un script temporal fuera del repo; se acepta ",5" = 0,5; tiempo fuera de rango con min/max en segundos). T5 hecha (2026-10-13: `DiaHistorial`, `agruparPorDia` y `lib/utils/formatters.dart`; casos comprobados con script temporal). T6 hecha (2026-10-13: `TiempoPicker` + `mostrarTiempoPicker` con `CupertinoPicker`, límite de `LimitesTiempo`; `AyudaParametro` indexada por `CampoSesion`, textos comprobados contra el glosario). T7 hecha (2026-10-13: `SessionFormState` freezed con `hayCambios`/`terminado` y `OperacionFallida` para el mensaje de error; `SessionFormCubit` con `cambiarCampo`/`cambiarTiempo`/`cambiarNota`/`guardar`/`borrar`; editar un campo borra su error; DI con `registerFactoryParam<…, Session?, void>`: get_it 9.2 acepta `null` si P1 es nullable). T8 hecha (2026-10-13: `SessionFormScreen` + ruta `/session`, que devuelve `SessionFormStatus`; mensajes de error por campo en la pantalla; **verificación en el móvil pospuesta a T10** por decisión del autor, porque aún no hay botón en el inicio). T9 hecha (2026-10-13: `HistoryState`/`HistoryCubit` freezed, `HistoryScreen` con cabeceras de día, filas y mensajes vacío/error, ruta `/history`; al volver de editar recarga y muestra el resultado; **verificación en el móvil pospuesta a T10**). T10: código hecho (2026-10-13: botón flotante "Registrar sesión" y botón "Historial" en el inicio, recarga al volver, mensaje "Sesión guardada"); instalada en el móvil y el inicio se ve bien. **Pendiente: que el autor ejecute y confirme los 12 pasos del recorrido** (incluye lo pospuesto de T8 y T9). T10 sin marcar hasta entonces. → tasks → implement → validate. Decidido: rangos por campo; tiempo con selector h/m/s (el autor quiere DateTime + widgets propios: decidir en el plan); velocidad máxima, pulso y calorías enteros; distancia y odómetro hasta 2 decimales; odómetro solo valida rango (se quitó el aviso de odómetro menor, 2026-10-12); editar/borrar cualquier sesión, totales por día en el historial, navegación desde el inicio (botón flotante + botón "Historial"), sin barra inferior.
-- [ ] 002-rachas: resolver dudas → validar lo existente → completar lo que falte.
-- [ ] 003-calendario: resolver dudas → flujo completo.
+- [x] 001-registro-sesiones: **implementada** (2026-10-13).
+- [ ] Commit del trabajo de la spec 001 (cuando el autor lo pida).
+- [ ] 002-rachas: resolver dudas (`/sdd-spec`) → validar lo existente → completar. Ojo:
+  - la navegación del inicio ya la fija la 001 (botón flotante + "Historial");
+  - su RF-8 ("contadores a 0" sin sesiones) choca con RC-2 (mensaje para empezar).
+- [ ] 003-calendario: resolver dudas → flujo completo. Ojo: "calendario vacío" sin sesiones choca con RC-2.
 - [ ] 004-records: resolver dudas → flujo completo.

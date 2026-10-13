@@ -2,7 +2,7 @@
 App Flutter solo para Android y de uso personal: registra a diario las sesiones de bicicleta estática y motiva con la racha de días consecutivos. Proyecto de portafolio. Principios innegociables en `docs/constitution.md` (stack, spec, capas, datos e idioma); visión en `docs/ESPECIFICACION.md`; requisitos en `specs/`.
 
 ## Stack y estructura
-- Flutter (Dart `^3.13.3`) · `flutter_bloc` (un Cubit por pantalla) · `get_it` · `drift` (SQLite local) · `intl` (es) · `freezed` (todos los modelos de dominio y estados de Cubit) · rutas nombradas nativas.
+- Flutter (Dart `^3.13.3`) · `flutter_bloc` (un Cubit por pantalla) · `get_it` · `drift` (SQLite local) · `intl` + `flutter_localizations` (es; también los textos propios de Flutter) · `freezed` (todos los modelos de dominio y estados de Cubit) · rutas nombradas nativas.
 - Capas: `lib/ui/<feature>/{view_model,widgets}` → `lib/domain/` (modelos, lógica pura y validaciones) → `lib/data/{repositories,services/database}`. DI en `lib/config/`, rutas en `lib/routing/`. Detalle por tema en `.claude/rules/`.
 
 ## Comandos

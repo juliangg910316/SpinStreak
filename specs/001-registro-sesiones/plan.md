@@ -207,6 +207,7 @@ migration = MigrationStrategy(
 | Estados como clase de datos freezed con un enum `status` | Estados como unión freezed (`loading`, `ready`, `error`…) | El formulario debe conservar `entrada` en todos los estados (RC-1), y una unión obligaría a copiarla en cada caso. Además, `HomeState` ya sigue el patrón del enum (reglas de estado) |
 | `Streak` se mueve a `domain/models/` al convertirla a freezed | Dejarla en `streak_calculator.dart` | La estructura del proyecto pone los modelos en `domain/models/`. Es un refactor sin cambio de comportamiento (constitución, principio 2) |
 | Sin más dependencias que `freezed` | `json_serializable` | No hay JSON (datos solo en drift) |
+| **Traducciones de Flutter en español (añadido en la validación, 2026-10-13; aprobado por el autor):** `flutter_localizations` (incluido en el SDK de Flutter) y, en `MaterialApp`, `localizationsDelegates` (Material, Widgets, Cupertino), `supportedLocales: [Locale('es')]` y `locale: Locale('es')` | Solo `intl` | Con solo `intl`, los textos propios de Flutter (menú Cortar/Copiar/Pegar, tooltip "Back") salen en inglés, y RC-3 exige todos los textos en español. Se detectó en la validación |
 
 ## 7. Casos límite y su tratamiento
 
@@ -239,7 +240,7 @@ migration = MigrationStrategy(
 | RF-16 | `PopScope` + `hayCambios` |
 | RC-1 | Status `error` del formulario sin perder la entrada |
 | RC-2 | RF-12 |
-| RC-3 | `formatters.dart` (intl `es`) y textos en español |
+| RC-3 | `formatters.dart` (intl `es`), textos en español y `flutter_localizations` con `locale: es` en `main.dart` (T11) |
 
 ## 9. Verificación (sin tests, por decisión del autor)
 

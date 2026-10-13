@@ -2,6 +2,7 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 
@@ -29,6 +30,11 @@ class SpinStreakApp extends StatelessWidget {
     return MaterialApp(
       title: 'SpinStreak',
       theme: AppTheme.light,
+      // RC-3: también los textos propios de Flutter (menú Cortar/Copiar/
+      // Pegar, tooltips como "Atrás") en español.
+      locale: const Locale('es'),
+      supportedLocales: const [Locale('es')],
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
       initialRoute: RouteNames.home,
       onGenerateRoute: AppRouter.onGenerateRoute,
     );
