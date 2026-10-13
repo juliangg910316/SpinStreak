@@ -7,6 +7,7 @@ library;
 import 'package:drift/drift.dart';
 
 import '../../domain/models/session.dart';
+import '../../domain/models/session_data.dart';
 import '../../utils/result.dart';
 import '../services/database/app_database.dart';
 
@@ -19,11 +20,15 @@ class SessionRepository {
   /// Reloj inyectable para poder fijar la fecha en tests.
   final DateTime Function() _now;
 
-  /// Todas las sesiones, de la más reciente a la más antigua.
+  /// Todas las sesiones, de la más reciente a la más antigua. Si dos tienen
+  /// la misma fecha, primero la registrada después (mayor `id`).
   Future<Result<List<Session>>> getSessions() async {
     try {
       final query = _db.select(_db.sessions)
-        ..orderBy([(s) => OrderingTerm.desc(s.fecha)]);
+        ..orderBy([
+          (s) => OrderingTerm.desc(s.fecha),
+          (s) => OrderingTerm.desc(s.id),
+        ]);
       final rows = await query.get();
       return Result.ok(rows.map(_toDomain).toList());
     } on Exception catch (e) {
@@ -45,16 +50,8 @@ class SessionRepository {
     }
   }
 
-  /// Registra una sesión con la fecha actual.
-  Future<Result<void>> addSession({
-    required Duration tiempo,
-    required double distancia,
-    required int calorias,
-    required double odometro,
-    double? velocidadMax,
-    int? pulsoMax,
-    String? nota,
-  }) async {
+  /// Registra una sesión con [datos] y la fecha actual del reloj (RF-1).
+  Future<Result<void>> addSession(SessionData datos) async {
     try {
       final now = _now();
       await _db
@@ -63,13 +60,13 @@ class SessionRepository {
             SessionsCompanion.insert(
               fecha: now,
               dia: _formatDay(now),
-              tiempoSegundos: tiempo.inSeconds,
-              distanciaKm: distancia,
-              calorias: calorias,
-              odometroKm: odometro,
-              velocidadMaxKmh: Value(velocidadMax),
-              pulsoMax: Value(pulsoMax),
-              nota: Value(nota),
+              tiempoSegundos: datos.tiempo.inSeconds,
+              distanciaKm: datos.distancia,
+              calorias: datos.calorias,
+              odometroKm: datos.odometro,
+              velocidadMaxKmh: Value(datos.velocidadMax),
+              pulsoMax: Value(datos.pulsoMax),
+              nota: Value(datos.nota),
             ),
           );
       return const Result.ok(null);
@@ -78,20 +75,19 @@ class SessionRepository {
     }
   }
 
-  /// Actualiza los datos de [session]. La fecha y el día no se modifican.
-  Future<Result<void>> updateSession(Session session) async {
+  /// Sustituye los datos de la sesión [id] por [datos]. No escribe `fecha`
+  /// ni `dia`: editar nunca cambia la fecha (RF-2, RF-14).
+  Future<Result<void>> updateSession(int id, SessionData datos) async {
     try {
-      await (_db.update(
-        _db.sessions,
-      )..where((s) => s.id.equals(session.id))).write(
+      await (_db.update(_db.sessions)..where((s) => s.id.equals(id))).write(
         SessionsCompanion(
-          tiempoSegundos: Value(session.tiempo.inSeconds),
-          distanciaKm: Value(session.distancia),
-          calorias: Value(session.calorias),
-          odometroKm: Value(session.odometro),
-          velocidadMaxKmh: Value(session.velocidadMax),
-          pulsoMax: Value(session.pulsoMax),
-          nota: Value(session.nota),
+          tiempoSegundos: Value(datos.tiempo.inSeconds),
+          distanciaKm: Value(datos.distancia),
+          calorias: Value(datos.calorias),
+          odometroKm: Value(datos.odometro),
+          velocidadMaxKmh: Value(datos.velocidadMax),
+          pulsoMax: Value(datos.pulsoMax),
+          nota: Value(datos.nota),
         ),
       );
       return const Result.ok(null);
@@ -112,6 +108,7 @@ class SessionRepository {
   Session _toDomain(SessionRow row) => Session(
     id: row.id,
     fecha: row.fecha,
+    dia: _parseDay(row.dia),
     tiempo: Duration(seconds: row.tiempoSegundos),
     distancia: row.distanciaKm,
     calorias: row.calorias,

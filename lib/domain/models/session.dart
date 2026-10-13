@@ -3,42 +3,45 @@
 /// Es independiente de la persistencia: el repositorio convierte las filas de
 /// drift en este modelo, así que la UI y la lógica de negocio no dependen de
 /// la base de datos.
-class Session {
-  const Session({
-    required this.id,
-    required this.fecha,
-    required this.tiempo,
-    required this.distancia,
-    required this.calorias,
-    required this.odometro,
-    this.velocidadMax,
-    this.pulsoMax,
-    this.nota,
-  });
+library;
 
-  final int id;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  /// Momento del registro. Lo asigna la app y no se puede cambiar.
-  final DateTime fecha;
+part 'session.freezed.dart';
 
-  final Duration tiempo;
+@freezed
+abstract class Session with _$Session {
+  const Session._();
 
-  /// Kilómetros recorridos en la sesión.
-  final double distancia;
+  const factory Session({
+    required int id,
 
-  /// Estimación de la bici, en kcal.
-  final int calorias;
+    /// Momento del registro. Lo asigna la app y no se puede cambiar.
+    required DateTime fecha,
 
-  /// Total acumulado de la bici, en km.
-  final double odometro;
+    /// Día local del registro (sin hora). Es la clave de la racha y del
+    /// agrupado del historial.
+    required DateTime dia,
 
-  /// km/h. Opcional.
-  final double? velocidadMax;
+    required Duration tiempo,
 
-  /// Pulsaciones por minuto. Opcional.
-  final int? pulsoMax;
+    /// Kilómetros recorridos en la sesión (hasta 2 decimales).
+    required double distancia,
 
-  final String? nota;
+    /// Estimación de la bici, en kcal.
+    required int calorias,
+
+    /// Total acumulado de la bici, en km (hasta 2 decimales).
+    required double odometro,
+
+    /// km/h, entero. Opcional.
+    int? velocidadMax,
+
+    /// Pulsaciones por minuto. Opcional.
+    int? pulsoMax,
+
+    String? nota,
+  }) = _Session;
 
   /// Velocidad media en km/h (dato derivado, no se almacena).
   double get velocidadMedia {

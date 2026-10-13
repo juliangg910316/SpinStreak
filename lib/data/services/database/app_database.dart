@@ -31,7 +31,9 @@ class Sessions extends Table {
   late final distanciaKm = real()();
   late final calorias = integer()();
   late final odometroKm = real()();
-  late final velocidadMaxKmh = real().nullable()();
+
+  /// Entero desde `schemaVersion` 2 (antes `real`).
+  late final velocidadMaxKmh = integer().nullable()();
   late final pulsoMax = integer().nullable()();
   late final nota = text().nullable()();
 }
@@ -43,6 +45,29 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor])
     : super(executor ?? driftDatabase(name: 'spinstreak'));
 
+  /// Historial de versiones:
+  /// - 1: esquema inicial.
+  /// - 2: `velocidadMaxKmh` pasa de `real` a `integer` (spec 001).
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onUpgrade: (m, from, to) async {
+      if (from < 2) {
+        // Recrea la tabla copiando todas las filas. La velocidad máxima se
+        // redondea (32,6 → 33); `CAST` solo truncaría. NULL sigue siendo NULL.
+        await m.alterTable(
+          TableMigration(
+            sessions,
+            columnTransformer: {
+              sessions.velocidadMaxKmh: const CustomExpression<int>(
+                'CAST(ROUND(velocidad_max_kmh) AS INTEGER)',
+              ),
+            },
+          ),
+        );
+      }
+    },
+  );
 }

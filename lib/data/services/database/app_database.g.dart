@@ -88,11 +88,11 @@ class $SessionsTable extends Sessions
     'velocidadMaxKmh',
   );
   @override
-  late final GeneratedColumn<double> velocidadMaxKmh = GeneratedColumn<double>(
+  late final GeneratedColumn<int> velocidadMaxKmh = GeneratedColumn<int>(
     'velocidad_max_kmh',
     aliasedName,
     true,
-    type: DriftSqlType.double,
+    type: DriftSqlType.int,
     requiredDuringInsert: false,
   );
   static const VerificationMeta _pulsoMaxMeta = const VerificationMeta(
@@ -256,7 +256,7 @@ class $SessionsTable extends Sessions
         data['${effectivePrefix}odometro_km'],
       )!,
       velocidadMaxKmh: attachedDatabase.typeMapping.read(
-        DriftSqlType.double,
+        DriftSqlType.int,
         data['${effectivePrefix}velocidad_max_kmh'],
       ),
       pulsoMax: attachedDatabase.typeMapping.read(
@@ -289,7 +289,9 @@ class SessionRow extends DataClass implements Insertable<SessionRow> {
   final double distanciaKm;
   final int calorias;
   final double odometroKm;
-  final double? velocidadMaxKmh;
+
+  /// Entero desde `schemaVersion` 2 (antes `real`).
+  final int? velocidadMaxKmh;
   final int? pulsoMax;
   final String? nota;
   const SessionRow({
@@ -315,7 +317,7 @@ class SessionRow extends DataClass implements Insertable<SessionRow> {
     map['calorias'] = Variable<int>(calorias);
     map['odometro_km'] = Variable<double>(odometroKm);
     if (!nullToAbsent || velocidadMaxKmh != null) {
-      map['velocidad_max_kmh'] = Variable<double>(velocidadMaxKmh);
+      map['velocidad_max_kmh'] = Variable<int>(velocidadMaxKmh);
     }
     if (!nullToAbsent || pulsoMax != null) {
       map['pulso_max'] = Variable<int>(pulsoMax);
@@ -358,7 +360,7 @@ class SessionRow extends DataClass implements Insertable<SessionRow> {
       distanciaKm: serializer.fromJson<double>(json['distanciaKm']),
       calorias: serializer.fromJson<int>(json['calorias']),
       odometroKm: serializer.fromJson<double>(json['odometroKm']),
-      velocidadMaxKmh: serializer.fromJson<double?>(json['velocidadMaxKmh']),
+      velocidadMaxKmh: serializer.fromJson<int?>(json['velocidadMaxKmh']),
       pulsoMax: serializer.fromJson<int?>(json['pulsoMax']),
       nota: serializer.fromJson<String?>(json['nota']),
     );
@@ -374,7 +376,7 @@ class SessionRow extends DataClass implements Insertable<SessionRow> {
       'distanciaKm': serializer.toJson<double>(distanciaKm),
       'calorias': serializer.toJson<int>(calorias),
       'odometroKm': serializer.toJson<double>(odometroKm),
-      'velocidadMaxKmh': serializer.toJson<double?>(velocidadMaxKmh),
+      'velocidadMaxKmh': serializer.toJson<int?>(velocidadMaxKmh),
       'pulsoMax': serializer.toJson<int?>(pulsoMax),
       'nota': serializer.toJson<String?>(nota),
     };
@@ -388,7 +390,7 @@ class SessionRow extends DataClass implements Insertable<SessionRow> {
     double? distanciaKm,
     int? calorias,
     double? odometroKm,
-    Value<double?> velocidadMaxKmh = const Value.absent(),
+    Value<int?> velocidadMaxKmh = const Value.absent(),
     Value<int?> pulsoMax = const Value.absent(),
     Value<String?> nota = const Value.absent(),
   }) => SessionRow(
@@ -482,7 +484,7 @@ class SessionsCompanion extends UpdateCompanion<SessionRow> {
   final Value<double> distanciaKm;
   final Value<int> calorias;
   final Value<double> odometroKm;
-  final Value<double?> velocidadMaxKmh;
+  final Value<int?> velocidadMaxKmh;
   final Value<int?> pulsoMax;
   final Value<String?> nota;
   const SessionsCompanion({
@@ -522,7 +524,7 @@ class SessionsCompanion extends UpdateCompanion<SessionRow> {
     Expression<double>? distanciaKm,
     Expression<int>? calorias,
     Expression<double>? odometroKm,
-    Expression<double>? velocidadMaxKmh,
+    Expression<int>? velocidadMaxKmh,
     Expression<int>? pulsoMax,
     Expression<String>? nota,
   }) {
@@ -548,7 +550,7 @@ class SessionsCompanion extends UpdateCompanion<SessionRow> {
     Value<double>? distanciaKm,
     Value<int>? calorias,
     Value<double>? odometroKm,
-    Value<double?>? velocidadMaxKmh,
+    Value<int?>? velocidadMaxKmh,
     Value<int?>? pulsoMax,
     Value<String?>? nota,
   }) {
@@ -591,7 +593,7 @@ class SessionsCompanion extends UpdateCompanion<SessionRow> {
       map['odometro_km'] = Variable<double>(odometroKm.value);
     }
     if (velocidadMaxKmh.present) {
-      map['velocidad_max_kmh'] = Variable<double>(velocidadMaxKmh.value);
+      map['velocidad_max_kmh'] = Variable<int>(velocidadMaxKmh.value);
     }
     if (pulsoMax.present) {
       map['pulso_max'] = Variable<int>(pulsoMax.value);
@@ -639,7 +641,7 @@ typedef $$SessionsTableCreateCompanionBuilder = SessionsCompanion Function({
   required double distanciaKm,
   required int calorias,
   required double odometroKm,
-  Value<double?> velocidadMaxKmh,
+  Value<int?> velocidadMaxKmh,
   Value<int?> pulsoMax,
   Value<String?> nota,
 });
@@ -651,7 +653,7 @@ typedef $$SessionsTableUpdateCompanionBuilder = SessionsCompanion Function({
   Value<double> distanciaKm,
   Value<int> calorias,
   Value<double> odometroKm,
-  Value<double?> velocidadMaxKmh,
+  Value<int?> velocidadMaxKmh,
   Value<int?> pulsoMax,
   Value<String?> nota,
 });
@@ -700,7 +702,7 @@ class $$SessionsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<double> get velocidadMaxKmh => $composableBuilder(
+  ColumnFilters<int> get velocidadMaxKmh => $composableBuilder(
     column: $table.velocidadMaxKmh,
     builder: (column) => ColumnFilters(column),
   );
@@ -760,7 +762,7 @@ class $$SessionsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<double> get velocidadMaxKmh => $composableBuilder(
+  ColumnOrderings<int> get velocidadMaxKmh => $composableBuilder(
     column: $table.velocidadMaxKmh,
     builder: (column) => ColumnOrderings(column),
   );
@@ -812,7 +814,7 @@ class $$SessionsTableAnnotationComposer
     builder: (column) => column,
   );
 
-  GeneratedColumn<double> get velocidadMaxKmh => $composableBuilder(
+  GeneratedColumn<int> get velocidadMaxKmh => $composableBuilder(
     column: $table.velocidadMaxKmh,
     builder: (column) => column,
   );
@@ -862,7 +864,7 @@ class $$SessionsTableTableManager
                 Value<double> distanciaKm = const Value.absent(),
                 Value<int> calorias = const Value.absent(),
                 Value<double> odometroKm = const Value.absent(),
-                Value<double?> velocidadMaxKmh = const Value.absent(),
+                Value<int?> velocidadMaxKmh = const Value.absent(),
                 Value<int?> pulsoMax = const Value.absent(),
                 Value<String?> nota = const Value.absent(),
               }) => SessionsCompanion(
@@ -886,7 +888,7 @@ class $$SessionsTableTableManager
                 required double distanciaKm,
                 required int calorias,
                 required double odometroKm,
-                Value<double?> velocidadMaxKmh = const Value.absent(),
+                Value<int?> velocidadMaxKmh = const Value.absent(),
                 Value<int?> pulsoMax = const Value.absent(),
                 Value<String?> nota = const Value.absent(),
               }) => SessionsCompanion.insert(

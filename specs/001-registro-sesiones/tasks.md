@@ -23,7 +23,7 @@ No se crean tests (decisión del autor).
   - `HomeState` pasa a `@freezed` y se elimina el `copyWith` manual.
   - Hecho cuando: no quedan `copyWith` ni clases de modelo o estado manuales en `domain/` ni en `ui/home/`; `flutter run` muestra los mismos contadores en el inicio que antes; pasa la puerta.
 
-- [ ] **T3. `Session` y `SessionData` con freezed, velocidad máxima entera y migración a `schemaVersion` 2.** — RF-1, RF-2, RF-6, RF-9, RF-14
+- [x] **T3. `Session` y `SessionData` con freezed, velocidad máxima entera y migración a `schemaVersion` 2.** — RF-1, RF-2, RF-6, RF-9, RF-14
   - `Session` pasa a `@freezed`, con `dia`, `velocidadMax: int?` y el getter `velocidadMedia`.
   - Nuevo `SessionData` como `@freezed`.
   - Tabla: `velocidadMaxKmh` pasa a `integer().nullable()`, `schemaVersion` sube a 2 y se añade la migración `CAST(ROUND(...) AS INTEGER)`.
