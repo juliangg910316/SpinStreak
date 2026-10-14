@@ -27,5 +27,9 @@ String formatearKm(double km) => '${NumberFormat('#,##0.##').format(km)} km';
 String formatearKmh(double kmh) =>
     '${NumberFormat('#,##0.0').format(kmh)} km/h';
 
+/// "1 día", "12 días", "1.000 días" (singular solo con 1).
+String formatearDias(int dias) =>
+    dias == 1 ? '1 día' : '${NumberFormat('#,##0').format(dias)} días';
+
 /// "610 kcal".
 String formatearKcal(int kcal) => '${NumberFormat('#,##0').format(kcal)} kcal';

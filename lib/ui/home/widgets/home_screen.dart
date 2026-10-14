@@ -1,30 +1,54 @@
-/// Pantalla de inicio: racha actual, mejor racha y total de días.
+/// Pantalla de inicio: fecha de hoy, mensaje del día, racha actual, mejor
+/// racha y total de días (spec 002).
 ///
 /// Solo pinta el estado de [HomeCubit]; el `BlocProvider` lo crea el router.
-/// Desde aquí se registra una sesión y se abre el historial (spec 001); al
-/// volver de cualquiera de las dos, recarga la racha.
+/// Desde aquí se registra una sesión y se abre el historial (spec 001). La
+/// racha se recarga al volver de otra pantalla y al volver la app al primer
+/// plano (RF-6, RF-13).
 library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
+import '../../../domain/models/mensaje_dia.dart';
 import '../../../routing/route_names.dart';
+import '../../../utils/formatters.dart';
 import '../../session_form/view_model/session_form_state.dart';
 import '../view_model/home_cubit.dart';
 import '../view_model/home_state.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final today = DateFormat.yMMMMEEEEd().format(DateTime.now());
+  State<HomeScreen> createState() => _HomeScreenState();
+}
 
+class _HomeScreenState extends State<HomeScreen> {
+  late final AppLifecycleListener _ciclo;
+
+  @override
+  void initState() {
+    super.initState();
+    // RF-13: al volver la app al primer plano, recalcula con la fecha actual.
+    _ciclo = AppLifecycleListener(
+      onResume: () => context.read<HomeCubit>().cargar(),
+    );
+  }
+
+  @override
+  void dispose() {
+    _ciclo.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('SpinStreak')),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _registrarSesion(context),
+        onPressed: _registrarSesion,
         icon: const Icon(Icons.add),
         label: const Text('Registrar sesión'),
       ),
@@ -40,8 +64,17 @@ class HomeScreen extends StatelessWidget {
             // Margen inferior para que el botón flotante no tape contenido.
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
             children: [
-              Text(today, style: Theme.of(context).textTheme.titleMedium),
+              if (state.hoy case final hoy?)
+                Text(
+                  formatearFecha(hoy),
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
               const SizedBox(height: 16),
+              // RF-8 a RF-12: un único mensaje, encima de los contadores.
+              if (state.mensaje case final mensaje?) ...[
+                _TarjetaMensaje(mensaje: mensaje),
+                const SizedBox(height: 8),
+              ],
               _StatTile(label: 'Racha actual', value: state.streak.current),
               _StatTile(label: 'Mejor racha', value: state.streak.best),
               _StatTile(
@@ -50,7 +83,7 @@ class HomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               OutlinedButton.icon(
-                onPressed: () => _abrirHistorial(context),
+                onPressed: _abrirHistorial,
                 icon: const Icon(Icons.history),
                 label: const Text('Historial'),
               ),
@@ -63,7 +96,7 @@ class HomeScreen extends StatelessWidget {
 
   /// Abre el formulario vacío y, al volver, recarga la racha. Si se guardó,
   /// muestra "Sesión guardada".
-  Future<void> _registrarSesion(BuildContext context) async {
+  Future<void> _registrarSesion() async {
     final cubit = context.read<HomeCubit>();
     final messenger = ScaffoldMessenger.of(context);
 
@@ -78,10 +111,67 @@ class HomeScreen extends StatelessWidget {
 
   /// Abre el historial y, al volver, recarga la racha (pudo editarse o
   /// borrarse alguna sesión).
-  Future<void> _abrirHistorial(BuildContext context) async {
+  Future<void> _abrirHistorial() async {
     final cubit = context.read<HomeCubit>();
     await Navigator.of(context).pushNamed(RouteNames.history);
     await cubit.cargar();
+  }
+}
+
+/// Tarjeta con el mensaje del día (RF-8 a RF-11), con colores del tema.
+class _TarjetaMensaje extends StatelessWidget {
+  const _TarjetaMensaje({required this.mensaje});
+
+  final MensajeDia mensaje;
+
+  @override
+  Widget build(BuildContext context) {
+    final colores = Theme.of(context).colorScheme;
+    final (icono, fondo, texto, contenido) = switch (mensaje) {
+      Bienvenida() => (
+        Icons.waving_hand_outlined,
+        colores.secondaryContainer,
+        colores.onSecondaryContainer,
+        'Aún no has registrado ninguna sesión. Toca «Registrar sesión» para '
+            'empezar tu racha.',
+      ),
+      ASalvo() => (
+        Icons.check_circle_outline,
+        colores.primaryContainer,
+        colores.onPrimaryContainer,
+        'Hoy ya has entrenado. ¡Racha a salvo!',
+      ),
+      Riesgo(:final dias) => (
+        Icons.warning_amber_outlined,
+        colores.errorContainer,
+        colores.onErrorContainer,
+        'Entrena hoy para mantener tu racha de ${formatearDias(dias)}.',
+      ),
+      Reiniciada(:final mejorRacha) => (
+        Icons.restart_alt,
+        colores.secondaryContainer,
+        colores.onSecondaryContainer,
+        'Tu racha se ha reiniciado. Tu mejor racha es de '
+            '${formatearDias(mejorRacha)}: registra una sesión hoy para '
+            'empezar una nueva.',
+      ),
+    };
+
+    return Card(
+      color: fondo,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            Icon(icono, color: texto),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(contenido, style: TextStyle(color: texto)),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 

@@ -26,7 +26,12 @@ Streak calculateStreak(Iterable<DateTime> trainedDays, DateTime today) {
   final todayNumber = _dayNumber(today);
   final isAlive = days.last >= todayNumber - 1;
 
-  return Streak(current: isAlive ? run : 0, best: best, totalDays: days.length);
+  return Streak(
+    current: isAlive ? run : 0,
+    best: best,
+    totalDays: days.length,
+    trainedToday: days.last == todayNumber,
+  );
 }
 
 /// Número de día a partir de la fecha local.

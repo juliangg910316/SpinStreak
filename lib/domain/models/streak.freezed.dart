@@ -18,7 +18,8 @@ mixin _$Streak {
 /// Días consecutivos entrenados que terminan hoy o ayer.
  int get current;/// Racha más larga histórica.
  int get best;/// Total de días distintos con al menos una sesión.
- int get totalDays;
+ int get totalDays;/// Hoy hay al menos una sesión (decide el mensaje del día, spec 002).
+ bool get trainedToday;
 /// Create a copy of Streak
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -30,20 +31,20 @@ $StreakCopyWith<Streak> get copyWith => _$StreakCopyWithImpl<Streak>(this as Str
 @override
 bool operator ==(Object other) {
   final _this = this as Streak;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Streak&&(identical(other.current, _this.current) || other.current == _this.current)&&(identical(other.best, _this.best) || other.best == _this.best)&&(identical(other.totalDays, _this.totalDays) || other.totalDays == _this.totalDays));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Streak&&(identical(other.current, _this.current) || other.current == _this.current)&&(identical(other.best, _this.best) || other.best == _this.best)&&(identical(other.totalDays, _this.totalDays) || other.totalDays == _this.totalDays)&&(identical(other.trainedToday, _this.trainedToday) || other.trainedToday == _this.trainedToday));
 }
 
 
 @override
 int get hashCode {
   final _this = this as Streak;
-  return Object.hash(runtimeType,_this.current,_this.best,_this.totalDays);
+  return Object.hash(runtimeType,_this.current,_this.best,_this.totalDays,_this.trainedToday);
 }
 
 @override
 String toString() {
   final _this = this as Streak;
-  return 'Streak(current: ${_this.current}, best: ${_this.best}, totalDays: ${_this.totalDays})';
+  return 'Streak(current: ${_this.current}, best: ${_this.best}, totalDays: ${_this.totalDays}, trainedToday: ${_this.trainedToday})';
 }
 
 
@@ -54,7 +55,7 @@ abstract mixin class $StreakCopyWith<$Res>  {
   factory $StreakCopyWith(Streak value, $Res Function(Streak) _then) = _$StreakCopyWithImpl;
 @useResult
 $Res call({
- int current, int best, int totalDays
+ int current, int best, int totalDays, bool trainedToday
 });
 
 
@@ -71,12 +72,13 @@ class _$StreakCopyWithImpl<$Res>
 
 /// Create a copy of Streak
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? current = null,Object? best = null,Object? totalDays = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? current = null,Object? best = null,Object? totalDays = null,Object? trainedToday = null,}) {
   return _then(Streak(
 current: null == current ? _self.current : current // ignore: cast_nullable_to_non_nullable
 as int,best: null == best ? _self.best : best // ignore: cast_nullable_to_non_nullable
 as int,totalDays: null == totalDays ? _self.totalDays : totalDays // ignore: cast_nullable_to_non_nullable
-as int,
+as int,trainedToday: null == trainedToday ? _self.trainedToday : trainedToday // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -161,10 +163,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int current,  int best,  int totalDays)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int current,  int best,  int totalDays,  bool trainedToday)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Streak() when $default != null:
-return $default(_that.current,_that.best,_that.totalDays);case _:
+return $default(_that.current,_that.best,_that.totalDays,_that.trainedToday);case _:
   return orElse();
 
 }
@@ -182,10 +184,10 @@ return $default(_that.current,_that.best,_that.totalDays);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int current,  int best,  int totalDays)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int current,  int best,  int totalDays,  bool trainedToday)  $default,) {final _that = this;
 switch (_that) {
 case _Streak():
-return $default(_that.current,_that.best,_that.totalDays);case _:
+return $default(_that.current,_that.best,_that.totalDays,_that.trainedToday);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -202,10 +204,10 @@ return $default(_that.current,_that.best,_that.totalDays);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int current,  int best,  int totalDays)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int current,  int best,  int totalDays,  bool trainedToday)?  $default,) {final _that = this;
 switch (_that) {
 case _Streak() when $default != null:
-return $default(_that.current,_that.best,_that.totalDays);case _:
+return $default(_that.current,_that.best,_that.totalDays,_that.trainedToday);case _:
   return null;
 
 }
@@ -217,7 +219,7 @@ return $default(_that.current,_that.best,_that.totalDays);case _:
 
 
 class _Streak implements Streak {
-  const _Streak({required this.current, required this.best, required this.totalDays});
+  const _Streak({required this.current, required this.best, required this.totalDays, required this.trainedToday});
   
 
 /// Días consecutivos entrenados que terminan hoy o ayer.
@@ -226,6 +228,8 @@ class _Streak implements Streak {
 @override final  int best;
 /// Total de días distintos con al menos una sesión.
 @override final  int totalDays;
+/// Hoy hay al menos una sesión (decide el mensaje del día, spec 002).
+@override final  bool trainedToday;
 
 /// Create a copy of Streak
 /// with the given fields replaced by the non-null parameter values.
@@ -237,18 +241,18 @@ _$StreakCopyWith<_Streak> get copyWith => __$StreakCopyWithImpl<_Streak>(this, _
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Streak&&(identical(other.current, current) || other.current == current)&&(identical(other.best, best) || other.best == best)&&(identical(other.totalDays, totalDays) || other.totalDays == totalDays));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Streak&&(identical(other.current, current) || other.current == current)&&(identical(other.best, best) || other.best == best)&&(identical(other.totalDays, totalDays) || other.totalDays == totalDays)&&(identical(other.trainedToday, trainedToday) || other.trainedToday == trainedToday));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,current,best,totalDays);
+    return Object.hash(runtimeType,current,best,totalDays,trainedToday);
 }
 
 @override
 String toString() {
-    return 'Streak(current: $current, best: $best, totalDays: $totalDays)';
+    return 'Streak(current: $current, best: $best, totalDays: $totalDays, trainedToday: $trainedToday)';
 }
 
 
@@ -259,7 +263,7 @@ abstract mixin class _$StreakCopyWith<$Res> implements $StreakCopyWith<$Res> {
   factory _$StreakCopyWith(_Streak value, $Res Function(_Streak) _then) = __$StreakCopyWithImpl;
 @override @useResult
 $Res call({
- int current, int best, int totalDays
+ int current, int best, int totalDays, bool trainedToday
 });
 
 
@@ -276,12 +280,13 @@ class __$StreakCopyWithImpl<$Res>
 
 /// Create a copy of Streak
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? current = null,Object? best = null,Object? totalDays = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? current = null,Object? best = null,Object? totalDays = null,Object? trainedToday = null,}) {
   return _then(_Streak(
 current: null == current ? _self.current : current // ignore: cast_nullable_to_non_nullable
 as int,best: null == best ? _self.best : best // ignore: cast_nullable_to_non_nullable
 as int,totalDays: null == totalDays ? _self.totalDays : totalDays // ignore: cast_nullable_to_non_nullable
-as int,
+as int,trainedToday: null == trainedToday ? _self.trainedToday : trainedToday // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

@@ -1,5 +1,5 @@
 # Spec 002 — Rachas
-Estado: aprobada
+Estado: implementada
 
 ## Contexto y objetivo
 La motivación principal de la app es la constancia: ver cuántos días seguidos se ha entrenado anima a no saltarse el siguiente. La pantalla de inicio muestra la racha actual, la mejor racha y el total de días entrenados, y un mensaje que dice en cada momento qué hacer hoy para mantener o recuperar la racha.

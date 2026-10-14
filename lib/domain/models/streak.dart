@@ -18,8 +18,16 @@ abstract class Streak with _$Streak {
 
     /// Total de días distintos con al menos una sesión.
     required int totalDays,
+
+    /// Hoy hay al menos una sesión (decide el mensaje del día, spec 002).
+    required bool trainedToday,
   }) = _Streak;
 
   /// Sin sesiones: los tres contadores a 0.
-  static const empty = Streak(current: 0, best: 0, totalDays: 0);
+  static const empty = Streak(
+    current: 0,
+    best: 0,
+    totalDays: 0,
+    trainedToday: false,
+  );
 }

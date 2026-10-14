@@ -15,7 +15,10 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$HomeState {
 
- HomeStatus get status; Streak get streak;
+ HomeStatus get status; Streak get streak;/// Instante de la última carga, del reloj del Cubit. Es el "hoy" de la
+/// racha y la fecha que se muestra (RF-1).
+ DateTime? get hoy;/// Mensaje del día (RF-8 a RF-11); `null` hasta la primera carga.
+ MensajeDia? get mensaje;
 /// Create a copy of HomeState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +30,20 @@ $HomeStateCopyWith<HomeState> get copyWith => _$HomeStateCopyWithImpl<HomeState>
 @override
 bool operator ==(Object other) {
   final _this = this as HomeState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is HomeState&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.streak, _this.streak) || other.streak == _this.streak));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is HomeState&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.streak, _this.streak) || other.streak == _this.streak)&&(identical(other.hoy, _this.hoy) || other.hoy == _this.hoy)&&(identical(other.mensaje, _this.mensaje) || other.mensaje == _this.mensaje));
 }
 
 
 @override
 int get hashCode {
   final _this = this as HomeState;
-  return Object.hash(runtimeType,_this.status,_this.streak);
+  return Object.hash(runtimeType,_this.status,_this.streak,_this.hoy,_this.mensaje);
 }
 
 @override
 String toString() {
   final _this = this as HomeState;
-  return 'HomeState(status: ${_this.status}, streak: ${_this.streak})';
+  return 'HomeState(status: ${_this.status}, streak: ${_this.streak}, hoy: ${_this.hoy}, mensaje: ${_this.mensaje})';
 }
 
 
@@ -51,11 +54,11 @@ abstract mixin class $HomeStateCopyWith<$Res>  {
   factory $HomeStateCopyWith(HomeState value, $Res Function(HomeState) _then) = _$HomeStateCopyWithImpl;
 @useResult
 $Res call({
- HomeStatus status, Streak streak
+ HomeStatus status, Streak streak, DateTime? hoy, MensajeDia? mensaje
 });
 
 
-$StreakCopyWith<$Res> get streak;
+$StreakCopyWith<$Res> get streak;$MensajeDiaCopyWith<$Res>? get mensaje;
 
 }
 /// @nodoc
@@ -68,11 +71,13 @@ class _$HomeStateCopyWithImpl<$Res>
 
 /// Create a copy of HomeState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? streak = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? streak = null,Object? hoy = freezed,Object? mensaje = freezed,}) {
   return _then(HomeState(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as HomeStatus,streak: null == streak ? _self.streak : streak // ignore: cast_nullable_to_non_nullable
-as Streak,
+as Streak,hoy: freezed == hoy ? _self.hoy : hoy // ignore: cast_nullable_to_non_nullable
+as DateTime?,mensaje: freezed == mensaje ? _self.mensaje : mensaje // ignore: cast_nullable_to_non_nullable
+as MensajeDia?,
   ));
 }
 /// Create a copy of HomeState
@@ -83,6 +88,18 @@ $StreakCopyWith<$Res> get streak {
   
   return $StreakCopyWith<$Res>(_self.streak, (value) {
     return _then(_self.copyWith(streak: value));
+  });
+}/// Create a copy of HomeState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$MensajeDiaCopyWith<$Res>? get mensaje {
+    if (_self.mensaje == null) {
+    return null;
+  }
+
+  return $MensajeDiaCopyWith<$Res>(_self.mensaje!, (value) {
+    return _then(_self.copyWith(mensaje: value));
   });
 }
 }
@@ -166,10 +183,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( HomeStatus status,  Streak streak)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( HomeStatus status,  Streak streak,  DateTime? hoy,  MensajeDia? mensaje)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _HomeState() when $default != null:
-return $default(_that.status,_that.streak);case _:
+return $default(_that.status,_that.streak,_that.hoy,_that.mensaje);case _:
   return orElse();
 
 }
@@ -187,10 +204,10 @@ return $default(_that.status,_that.streak);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( HomeStatus status,  Streak streak)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( HomeStatus status,  Streak streak,  DateTime? hoy,  MensajeDia? mensaje)  $default,) {final _that = this;
 switch (_that) {
 case _HomeState():
-return $default(_that.status,_that.streak);case _:
+return $default(_that.status,_that.streak,_that.hoy,_that.mensaje);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -207,10 +224,10 @@ return $default(_that.status,_that.streak);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( HomeStatus status,  Streak streak)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( HomeStatus status,  Streak streak,  DateTime? hoy,  MensajeDia? mensaje)?  $default,) {final _that = this;
 switch (_that) {
 case _HomeState() when $default != null:
-return $default(_that.status,_that.streak);case _:
+return $default(_that.status,_that.streak,_that.hoy,_that.mensaje);case _:
   return null;
 
 }
@@ -222,11 +239,16 @@ return $default(_that.status,_that.streak);case _:
 
 
 class _HomeState implements HomeState {
-  const _HomeState({this.status = HomeStatus.loading, this.streak = Streak.empty});
+  const _HomeState({this.status = HomeStatus.loading, this.streak = Streak.empty, this.hoy, this.mensaje});
   
 
 @override@JsonKey() final  HomeStatus status;
 @override@JsonKey() final  Streak streak;
+/// Instante de la última carga, del reloj del Cubit. Es el "hoy" de la
+/// racha y la fecha que se muestra (RF-1).
+@override final  DateTime? hoy;
+/// Mensaje del día (RF-8 a RF-11); `null` hasta la primera carga.
+@override final  MensajeDia? mensaje;
 
 /// Create a copy of HomeState
 /// with the given fields replaced by the non-null parameter values.
@@ -238,18 +260,18 @@ _$HomeStateCopyWith<_HomeState> get copyWith => __$HomeStateCopyWithImpl<_HomeSt
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _HomeState&&(identical(other.status, status) || other.status == status)&&(identical(other.streak, streak) || other.streak == streak));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _HomeState&&(identical(other.status, status) || other.status == status)&&(identical(other.streak, streak) || other.streak == streak)&&(identical(other.hoy, hoy) || other.hoy == hoy)&&(identical(other.mensaje, mensaje) || other.mensaje == mensaje));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,status,streak);
+    return Object.hash(runtimeType,status,streak,hoy,mensaje);
 }
 
 @override
 String toString() {
-    return 'HomeState(status: $status, streak: $streak)';
+    return 'HomeState(status: $status, streak: $streak, hoy: $hoy, mensaje: $mensaje)';
 }
 
 
@@ -260,11 +282,11 @@ abstract mixin class _$HomeStateCopyWith<$Res> implements $HomeStateCopyWith<$Re
   factory _$HomeStateCopyWith(_HomeState value, $Res Function(_HomeState) _then) = __$HomeStateCopyWithImpl;
 @override @useResult
 $Res call({
- HomeStatus status, Streak streak
+ HomeStatus status, Streak streak, DateTime? hoy, MensajeDia? mensaje
 });
 
 
-@override $StreakCopyWith<$Res> get streak;
+@override $StreakCopyWith<$Res> get streak;@override $MensajeDiaCopyWith<$Res>? get mensaje;
 
 }
 /// @nodoc
@@ -277,11 +299,13 @@ class __$HomeStateCopyWithImpl<$Res>
 
 /// Create a copy of HomeState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? streak = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? streak = null,Object? hoy = freezed,Object? mensaje = freezed,}) {
   return _then(_HomeState(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as HomeStatus,streak: null == streak ? _self.streak : streak // ignore: cast_nullable_to_non_nullable
-as Streak,
+as Streak,hoy: freezed == hoy ? _self.hoy : hoy // ignore: cast_nullable_to_non_nullable
+as DateTime?,mensaje: freezed == mensaje ? _self.mensaje : mensaje // ignore: cast_nullable_to_non_nullable
+as MensajeDia?,
   ));
 }
 
@@ -293,6 +317,18 @@ $StreakCopyWith<$Res> get streak {
   
   return $StreakCopyWith<$Res>(_self.streak, (value) {
     return _then(_self.copyWith(streak: value));
+  });
+}/// Create a copy of HomeState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$MensajeDiaCopyWith<$Res>? get mensaje {
+    if (_self.mensaje == null) {
+    return null;
+  }
+
+  return $MensajeDiaCopyWith<$Res>(_self.mensaje!, (value) {
+    return _then(_self.copyWith(mensaje: value));
   });
 }
 }
