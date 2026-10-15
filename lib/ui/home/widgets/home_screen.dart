@@ -2,7 +2,8 @@
 /// racha y total de días (spec 002).
 ///
 /// Solo pinta el estado de [HomeCubit]; el `BlocProvider` lo crea el router.
-/// Desde aquí se registra una sesión y se abre el historial (spec 001). La
+/// Desde aquí se registra una sesión y se abren el historial (spec 001) y el
+/// calendario (spec 003). La
 /// racha se recarga al volver de otra pantalla y al volver la app al primer
 /// plano (RF-6, RF-13).
 library;
@@ -83,9 +84,15 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 16),
               OutlinedButton.icon(
-                onPressed: _abrirHistorial,
+                onPressed: () => _abrir(RouteNames.history),
                 icon: const Icon(Icons.history),
                 label: const Text('Historial'),
+              ),
+              const SizedBox(height: 8),
+              OutlinedButton.icon(
+                onPressed: () => _abrir(RouteNames.calendar),
+                icon: const Icon(Icons.calendar_month),
+                label: const Text('Calendario'),
               ),
             ],
           ),
@@ -109,11 +116,11 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  /// Abre el historial y, al volver, recarga la racha (pudo editarse o
-  /// borrarse alguna sesión).
-  Future<void> _abrirHistorial() async {
+  /// Abre una pantalla secundaria (historial o calendario) y, al volver,
+  /// recarga la racha (pudo editarse o borrarse alguna sesión).
+  Future<void> _abrir(String ruta) async {
     final cubit = context.read<HomeCubit>();
-    await Navigator.of(context).pushNamed(RouteNames.history);
+    await Navigator.of(context).pushNamed(ruta);
     await cubit.cargar();
   }
 }

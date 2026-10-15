@@ -10,4 +10,7 @@ abstract final class RouteNames {
 
   /// Historial de sesiones agrupado por día.
   static const history = '/history';
+
+  /// Calendario mensual de días entrenados.
+  static const calendar = '/calendar';
 }

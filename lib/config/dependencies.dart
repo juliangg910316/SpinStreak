@@ -10,6 +10,7 @@ import 'package:get_it/get_it.dart';
 import '../data/repositories/session_repository.dart';
 import '../data/services/database/app_database.dart';
 import '../domain/models/session.dart';
+import '../ui/calendar/view_model/calendar_cubit.dart';
 import '../ui/history/view_model/history_cubit.dart';
 import '../ui/home/view_model/home_cubit.dart';
 import '../ui/session_form/view_model/session_form_cubit.dart';
@@ -27,6 +28,9 @@ void setupDependencies() {
     ..registerFactory<HomeCubit>(() => HomeCubit(sessionRepository: getIt()))
     ..registerFactory<HistoryCubit>(
       () => HistoryCubit(sessionRepository: getIt()),
+    )
+    ..registerFactory<CalendarCubit>(
+      () => CalendarCubit(sessionRepository: getIt()),
     )
     // Formulario: `param1` es la sesión a editar, o null para una nueva.
     ..registerFactoryParam<SessionFormCubit, Session?, void>(

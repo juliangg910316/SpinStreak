@@ -9,6 +9,9 @@ import 'package:intl/intl.dart';
 /// "sábado, 10 de octubre de 2026".
 String formatearFecha(DateTime fecha) => DateFormat.yMMMMEEEEd().format(fecha);
 
+/// "octubre de 2026".
+String formatearMes(DateTime fecha) => DateFormat.yMMMM().format(fecha);
+
 /// "18:30" (24 horas).
 String formatearHora(DateTime fecha) => DateFormat.Hm().format(fecha);
 

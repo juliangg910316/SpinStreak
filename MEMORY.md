@@ -1,10 +1,11 @@
 # MEMORY.md -- SpinStreak
 
-## Estado actual (2026-10-14)
+## Estado actual (2026-10-15)
 - **Spec 001 (registro de sesiones): `implementada`** (11 tareas; validada el 2026-10-13). Hay formulario de alta y edición, selector de tiempo, ayuda ⓘ, historial por día con totales, borrado con confirmación y navegación desde el inicio.
 - **Spec 002 (rachas): `implementada`** (4 tareas; validada el 2026-10-14). El inicio muestra la fecha, un "mensaje del día" (bienvenida, a salvo, riesgo o racha reiniciada) y los contadores, y recalcula al volver la app al primer plano.
+- **Spec 003 (calendario): `implementada`** (7 tareas; validada el 2026-10-15). Botón "Calendario" en el inicio; mes con días entrenados, hoy seleccionado y sesiones del día editables.
 - Base de datos en `schemaVersion` 2 (velocidad máxima entera, migración verificada en el móvil).
-- Sin tests (`test/` no existe). Git: el autor ya hizo commit de la 001; **el trabajo de la 002 está sin commitear**.
+- Sin tests (`test/` no existe). Git: el autor ya hizo commit de la 001; **el trabajo de la 002 y la 003 está sin commitear**.
 
 ## Decisiones (y por qué)
 - Solo Android, uso personal y datos solo locales: es una app personal y no necesita backend.
@@ -38,7 +39,11 @@
   - Decidido: botones "Historial", "Calendario" y "Récords" bajo los contadores (sin barra inferior); un único mensaje del día; recálculo al volver a la app.
   - Hecho: `Streak.trainedToday`, `MensajeDia` + `mensajeDelDia`, `formatearDias`, "hoy" en `HomeState` (sin `DateTime.now()` en la UI) y `AppLifecycleListener`.
   - Verificado con script temporal (12 casos) y con BD de prueba en el móvil (con permiso; BD original restaurada e idéntica).
-- [ ] Commit del trabajo de la spec 002 (cuando el autor lo pida).
+- [ ] Commit del trabajo de las specs 002 y 003 (cuando el autor lo pida).
 - Specs 002, 003 y 004 actualizadas con lo fijado en la 001 (2026-10-13): día fijado al registrar y que no cambia al editar, navegación ya existente del inicio, formatos y tipos de los valores, y `dart format` en los criterios. Los choques (navegación, RC-2 sin sesiones, editar desde el calendario, aviso de récord tras "Sesión guardada") quedaron como `[NECESITA ACLARACIÓN]`, sin decidir.
-- [ ] 003-calendario: resolver dudas (`/sdd-spec`) → flujo completo. La navegación ya está decidida en la 002: botón "Calendario" bajo los contadores, con el estilo de "Historial"; el plan de la 003 debe añadirlo.
+- [x] 003-calendario: **implementada** (2026-10-15; 7 tareas).
+  - Decidido: vista mensual L–D con flechas sin pasar del mes de hoy; mismo círculo para todo día entrenado; hoy seleccionado al abrir y al volver al mes de hoy (cambio del autor del 2026-10-14, RF-15/RF-16), con fecha y "Hoy aún no has entrenado…" si no tiene sesiones; sesiones del día debajo, editables.
+  - Hecho: cuadrícula propia (sin `table_calendar`), `construirMes`, `diaASeleccionar` y `CeldaDia.seleccionable` en domain; `CabeceraDia`, `FilaSesion` y `editarSesion` compartidos en `ui/core/ui/`.
+  - Verificado con scripts temporales (23 + 12 casos) y BD de prueba en el móvil (con permiso; BD original restaurada e idéntica). RF-14 solo revisando el código.
+  - **Anomalía sin resolver:** la BD de prueba traída del móvil antes de restaurar era idéntica byte a byte a la recién creada, aunque el autor editó y borró sesiones (igual en la 002). Journal `delete`, sin `-wal`. Investigar (editar, cerrar la app del todo y reabrir) antes de fiarse de "traer la BD" para comprobar escrituras.
 - [ ] 004-records: resolver dudas → flujo completo. Si los récords tienen pantalla propia, botón "Récords" bajo los contadores (spec 002); si van en el inicio, no hay botón.
