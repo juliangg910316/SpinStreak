@@ -2,7 +2,8 @@
 ///
 /// Solo pinta el estado de [SessionFormCubit] y le pasa lo que escribe el
 /// usuario; el `BlocProvider` lo crea el router. Al terminar (guardada,
-/// actualizada o borrada) se cierra devolviendo ese [SessionFormStatus].
+/// actualizada o borrada) se cierra devolviendo un [ResultadoFormulario] con
+/// ese estado y los récords batidos.
 library;
 
 import 'package:flutter/material.dart';
@@ -145,7 +146,12 @@ class _SessionFormScreenState extends State<SessionFormScreen> {
 
   void _alCambiarStatus(BuildContext context, SessionFormState state) {
     if (state.terminado) {
-      Navigator.of(context).pop(state.status);
+      Navigator.of(context).pop(
+        ResultadoFormulario(
+          status: state.status,
+          recordsBatidos: state.recordsBatidos,
+        ),
+      );
     } else if (state.status == SessionFormStatus.error) {
       // RC-1: mensaje comprensible; la entrada sigue en el formulario.
       final mensaje = switch (state.fallo) {

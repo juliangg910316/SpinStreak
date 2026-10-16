@@ -16,6 +16,8 @@ import '../ui/history/view_model/history_cubit.dart';
 import '../ui/history/widgets/history_screen.dart';
 import '../ui/home/view_model/home_cubit.dart';
 import '../ui/home/widgets/home_screen.dart';
+import '../ui/records/view_model/records_cubit.dart';
+import '../ui/records/widgets/records_screen.dart';
 import '../ui/session_form/view_model/session_form_cubit.dart';
 import '../ui/session_form/view_model/session_form_state.dart';
 import '../ui/session_form/widgets/session_form_screen.dart';
@@ -31,7 +33,7 @@ abstract final class AppRouter {
             child: const HomeScreen(),
           ),
         ),
-        RouteNames.sessionForm => MaterialPageRoute<SessionFormStatus>(
+        RouteNames.sessionForm => MaterialPageRoute<ResultadoFormulario>(
           settings: settings,
           builder: (_) => BlocProvider(
             create: (_) =>
@@ -51,6 +53,13 @@ abstract final class AppRouter {
           builder: (_) => BlocProvider(
             create: (_) => getIt<CalendarCubit>()..cargar(),
             child: const CalendarScreen(),
+          ),
+        ),
+        RouteNames.records => MaterialPageRoute<void>(
+          settings: settings,
+          builder: (_) => BlocProvider(
+            create: (_) => getIt<RecordsCubit>()..cargar(),
+            child: const RecordsScreen(),
           ),
         ),
         _ => null,

@@ -1,11 +1,12 @@
 # MEMORY.md -- SpinStreak
 
-## Estado actual (2026-10-15)
+## Estado actual (2026-10-16)
 - **Spec 001 (registro de sesiones): `implementada`** (11 tareas; validada el 2026-10-13). Hay formulario de alta y edición, selector de tiempo, ayuda ⓘ, historial por día con totales, borrado con confirmación y navegación desde el inicio.
 - **Spec 002 (rachas): `implementada`** (4 tareas; validada el 2026-10-14). El inicio muestra la fecha, un "mensaje del día" (bienvenida, a salvo, riesgo o racha reiniciada) y los contadores, y recalcula al volver la app al primer plano.
 - **Spec 003 (calendario): `implementada`** (7 tareas; validada el 2026-10-15). Botón "Calendario" en el inicio; mes con días entrenados, hoy seleccionado y sesiones del día editables.
+- **Spec 004 (récords): `implementada`** (6 tareas; validada el 2026-10-16). Pantalla "Récords" y aviso de récord al registrar.
 - Base de datos en `schemaVersion` 2 (velocidad máxima entera, migración verificada en el móvil).
-- Sin tests (`test/` no existe). Git: el autor ya hizo commit de la 001; **el trabajo de la 002 y la 003 está sin commitear**.
+- Sin tests (`test/` no existe). Git: el autor hizo commit de la 001, la 002 y la 003 (último: `a4d5362`, 2026-10-15); **el trabajo de la 004 está sin commitear**.
 
 ## Decisiones (y por qué)
 - Solo Android, uso personal y datos solo locales: es una app personal y no necesita backend.
@@ -30,7 +31,7 @@
 - No controlar el móvil del autor con `adb shell input` (toques y texto a ciegas): otra app puede pasar a primer plano y recibir la entrada. Para comprobaciones visuales, pedírselas al autor; `adb` solo para instalar, capturar pantalla o leer la BD.
 - RC-3 incluye los textos propios de Flutter/Material: `intl` no basta. Revisarlo en cada plan.
 - Antes de un "Hecho cuando" visual, comprobar con `flutter devices` que hay un dispositivo Android.
-- Probar migraciones sin tocar datos reales: copiar la BD del móvil (`adb exec-out run-as com.juliangg.spin_streak cat app_flutter/spinstreak.sqlite`), meter una BD de prueba, instalar con `adb install -r`, abrir, traer la BD, inspeccionarla con `node:sqlite` y restaurar el original. En Git Bash usar `MSYS_NO_PATHCONV=1`. El móvil puede desconectarse a mitad de la prueba: guardar siempre la copia original **antes** y, si se pierde la conexión, avisar al autor de que no toque datos hasta restaurarla.
+- Probar migraciones sin tocar datos reales: copiar la BD del móvil (`adb exec-out run-as com.juliangg.spin_streak cat app_flutter/spinstreak.sqlite`), meter una BD de prueba, instalar con `adb install -r`, abrir, traer la BD, inspeccionarla con `node:sqlite` y restaurar el original. En Git Bash usar `MSYS_NO_PATHCONV=1`. `run-as` solo funciona con la APK **debug** instalada (con la release falla con "package not debuggable"); se puede instalar encima con `adb install -r` sin perder datos (misma firma). El móvil puede desconectarse a mitad de la prueba: guardar siempre la copia original **antes** y, si se pierde la conexión, avisar al autor de que no toque datos hasta restaurarla.
 - Si una tarea solo se puede probar desde una pantalla que aún no existe, decidir con el autor si se pospone la comprobación (se hizo en T8 y T9, verificadas en T10).
 
 ## Próximos pasos (MVP)
@@ -39,11 +40,14 @@
   - Decidido: botones "Historial", "Calendario" y "Récords" bajo los contadores (sin barra inferior); un único mensaje del día; recálculo al volver a la app.
   - Hecho: `Streak.trainedToday`, `MensajeDia` + `mensajeDelDia`, `formatearDias`, "hoy" en `HomeState` (sin `DateTime.now()` en la UI) y `AppLifecycleListener`.
   - Verificado con script temporal (12 casos) y con BD de prueba en el móvil (con permiso; BD original restaurada e idéntica).
-- [ ] Commit del trabajo de las specs 002 y 003 (cuando el autor lo pida).
-- Specs 002, 003 y 004 actualizadas con lo fijado en la 001 (2026-10-13): día fijado al registrar y que no cambia al editar, navegación ya existente del inicio, formatos y tipos de los valores, y `dart format` en los criterios. Los choques (navegación, RC-2 sin sesiones, editar desde el calendario, aviso de récord tras "Sesión guardada") quedaron como `[NECESITA ACLARACIÓN]`, sin decidir.
 - [x] 003-calendario: **implementada** (2026-10-15; 7 tareas).
   - Decidido: vista mensual L–D con flechas sin pasar del mes de hoy; mismo círculo para todo día entrenado; hoy seleccionado al abrir y al volver al mes de hoy (cambio del autor del 2026-10-14, RF-15/RF-16), con fecha y "Hoy aún no has entrenado…" si no tiene sesiones; sesiones del día debajo, editables.
   - Hecho: cuadrícula propia (sin `table_calendar`), `construirMes`, `diaASeleccionar` y `CeldaDia.seleccionable` en domain; `CabeceraDia`, `FilaSesion` y `editarSesion` compartidos en `ui/core/ui/`.
   - Verificado con scripts temporales (23 + 12 casos) y BD de prueba en el móvil (con permiso; BD original restaurada e idéntica). RF-14 solo revisando el código.
-  - **Anomalía sin resolver:** la BD de prueba traída del móvil antes de restaurar era idéntica byte a byte a la recién creada, aunque el autor editó y borró sesiones (igual en la 002). Journal `delete`, sin `-wal`. Investigar (editar, cerrar la app del todo y reabrir) antes de fiarse de "traer la BD" para comprobar escrituras.
-- [ ] 004-records: resolver dudas → flujo completo. Si los récords tienen pantalla propia, botón "Récords" bajo los contadores (spec 002); si van en el inicio, no hay botón.
+  - **Anomalía de escritura (investigada el 2026-10-16):** con BD de prueba cargadas por `cargar_bd.sh` faltaban escrituras en el archivo (002, 003 y 004: el alta del paso 2 con la BD vacía, `sqlite_sequence` sin cambiar; el borrado del paso 8). Experimento con una copia idéntica de la BD real: alta, cierre desde recientes, reapertura y borrado llegan **al instante** al archivo (mismo inode, sin `-journal` ni `-wal`). En el uso normal la app guarda bien. Causa del fallo en las pruebas sin identificar (algo del cambio de BD o del momento de las lecturas). En próximas pruebas, leer el archivo con la app abierta tras cada escritura para detectarlo.
+- [x] 004-records: **implementada** (2026-10-16; 6 tareas).
+  - Decidido: pantalla propia con botón "Récords" bajo "Calendario"; 4 récords (tiempo, distancia, velocidad máxima, pulso máximo); aviso "Sesión guardada. ¡Nuevo(s) récord(s) de …!" solo al registrar, solo si se supera estrictamente y nunca en la primera sesión ni con el primer dato opcional; tocar un récord abre la edición de su sesión.
+  - Hecho: `calcularRecords`/`recordsBatidos` en domain (sin "hoy"); el formulario calcula los récords batidos antes de guardar y se cierra con `ResultadoFormulario`; formatos "32 km/h" y "160 ppm".
+  - Verificado con scripts temporales y BD de prueba en el móvil (con permiso; BD original restaurada e idéntica). RF-7 solo revisando el código.
+- [ ] Más adelante (decisión del autor, 2026-10-16): **récord de calorías**. Quedó fuera de la 004 (las calorías son una estimación de la bici); requiere cambiar la spec 004 (5 récords) y seguir el flujo.
+- El MVP (specs 001 a 004) está completo. En el móvil está instalada la APK debug.

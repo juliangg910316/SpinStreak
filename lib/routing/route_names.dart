@@ -5,7 +5,8 @@ abstract final class RouteNames {
   static const home = '/';
 
   /// Formulario de sesión. Argumento opcional: la `Session` a editar.
-  /// Devuelve el `SessionFormStatus` final (guardada, actualizada, borrada).
+  /// Devuelve un `ResultadoFormulario`: el estado final (guardada,
+  /// actualizada, borrada) y los récords batidos al registrar.
   static const sessionForm = '/session';
 
   /// Historial de sesiones agrupado por día.
@@ -13,4 +14,7 @@ abstract final class RouteNames {
 
   /// Calendario mensual de días entrenados.
   static const calendar = '/calendar';
+
+  /// Récords personales por sesión.
+  static const records = '/records';
 }

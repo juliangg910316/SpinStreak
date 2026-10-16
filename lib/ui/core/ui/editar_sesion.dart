@@ -19,8 +19,10 @@ Future<SessionFormStatus?> editarSesion(
 ) async {
   final messenger = ScaffoldMessenger.of(context);
 
-  final resultado = await Navigator.of(context)
-      .pushNamed<SessionFormStatus>(RouteNames.sessionForm, arguments: sesion);
+  final resultado = (await Navigator.of(context).pushNamed<ResultadoFormulario>(
+    RouteNames.sessionForm,
+    arguments: sesion,
+  ))?.status;
 
   final mensaje = switch (resultado) {
     SessionFormStatus.actualizada => 'Sesión actualizada',

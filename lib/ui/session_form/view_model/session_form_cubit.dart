@@ -9,7 +9,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../data/repositories/session_repository.dart';
 import '../../../domain/models/entrada_sesion.dart';
+import '../../../domain/models/record_personal.dart';
 import '../../../domain/models/session.dart';
+import '../../../domain/records_calculator.dart';
 import '../../../domain/session_validator.dart';
 import '../../../utils/result.dart';
 import 'session_form_state.dart';
@@ -87,6 +89,15 @@ class SessionFormCubit extends Cubit<SessionFormState> {
           ),
         );
         final original = state.original;
+        // Spec 004, RF-10 a RF-12: solo al registrar se comparan los datos
+        // con las sesiones anteriores. Si no se pueden leer, se guarda igual
+        // y no se avisa (RC-1: guardar es lo importante).
+        var batidos = const <TipoRecord>[];
+        if (original == null) {
+          if (await _sessionRepository.getSessions() case Ok(:final value)) {
+            batidos = recordsBatidos(value, datos);
+          }
+        }
         final result = original == null
             ? await _sessionRepository.addSession(datos)
             : await _sessionRepository.updateSession(original.id, datos);
@@ -96,6 +107,7 @@ class SessionFormCubit extends Cubit<SessionFormState> {
             status: original == null
                 ? SessionFormStatus.guardada
                 : SessionFormStatus.actualizada,
+            recordsBatidos: batidos,
           ),
           // RC-1: la entrada se conserva para reintentar.
           Error() => state.copyWith(

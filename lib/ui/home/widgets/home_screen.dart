@@ -3,7 +3,7 @@
 ///
 /// Solo pinta el estado de [HomeCubit]; el `BlocProvider` lo crea el router.
 /// Desde aquí se registra una sesión y se abren el historial (spec 001) y el
-/// calendario (spec 003). La
+/// calendario (spec 003) y los récords (spec 004). La
 /// racha se recarga al volver de otra pantalla y al volver la app al primer
 /// plano (RF-6, RF-13).
 library;
@@ -13,6 +13,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../../../domain/models/mensaje_dia.dart';
+import '../../../domain/models/record_personal.dart';
 import '../../../routing/route_names.dart';
 import '../../../utils/formatters.dart';
 import '../../session_form/view_model/session_form_state.dart';
@@ -94,6 +95,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: const Icon(Icons.calendar_month),
                 label: const Text('Calendario'),
               ),
+              const SizedBox(height: 8),
+              OutlinedButton.icon(
+                onPressed: () => _abrir(RouteNames.records),
+                icon: const Icon(Icons.emoji_events),
+                label: const Text('Récords'),
+              ),
             ],
           ),
         },
@@ -102,27 +109,54 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   /// Abre el formulario vacío y, al volver, recarga la racha. Si se guardó,
-  /// muestra "Sesión guardada".
+  /// muestra "Sesión guardada" o el aviso de récord (spec 004, RF-10, RF-11).
   Future<void> _registrarSesion() async {
     final cubit = context.read<HomeCubit>();
     final messenger = ScaffoldMessenger.of(context);
 
     final resultado = await Navigator.of(context)
-        .pushNamed<SessionFormStatus>(RouteNames.sessionForm);
+        .pushNamed<ResultadoFormulario>(RouteNames.sessionForm);
     await cubit.cargar();
 
-    if (resultado == SessionFormStatus.guardada) {
-      messenger.showSnackBar(const SnackBar(content: Text('Sesión guardada')));
+    if (resultado case ResultadoFormulario(
+      status: SessionFormStatus.guardada,
+      :final recordsBatidos,
+    )) {
+      messenger.showSnackBar(
+        SnackBar(content: Text(_textoGuardada(recordsBatidos))),
+      );
     }
   }
 
-  /// Abre una pantalla secundaria (historial o calendario) y, al volver,
+  /// Abre una pantalla secundaria (historial, calendario o récords) y, al volver,
   /// recarga la racha (pudo editarse o borrarse alguna sesión).
   Future<void> _abrir(String ruta) async {
     final cubit = context.read<HomeCubit>();
     await Navigator.of(context).pushNamed(ruta);
     await cubit.cargar();
   }
+}
+
+/// "Sesión guardada", con el aviso de los récords batidos si los hay:
+/// "¡Nuevo récord de distancia!" o "¡Nuevos récords de tiempo, distancia y
+/// pulso máximo!" (spec 004, RF-10). Los nombres van en el orden recibido,
+/// que es el de `TipoRecord`.
+String _textoGuardada(List<TipoRecord> batidos) {
+  final lista = [
+    for (final tipo in batidos)
+      switch (tipo) {
+        TipoRecord.tiempo => 'tiempo',
+        TipoRecord.distancia => 'distancia',
+        TipoRecord.velocidadMax => 'velocidad máxima',
+        TipoRecord.pulsoMax => 'pulso máximo',
+      },
+  ];
+  return switch (lista) {
+    [] => 'Sesión guardada',
+    [final unico] => 'Sesión guardada. ¡Nuevo récord de $unico!',
+    [...final primeros, final ultimo] =>
+      'Sesión guardada. ¡Nuevos récords de ${primeros.join(', ')} y $ultimo!',
+  };
 }
 
 /// Tarjeta con el mensaje del día (RF-8 a RF-11), con colores del tema.

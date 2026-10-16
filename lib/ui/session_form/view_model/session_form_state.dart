@@ -4,6 +4,7 @@ library;
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../../domain/models/entrada_sesion.dart';
+import '../../../domain/models/record_personal.dart';
 import '../../../domain/models/session.dart';
 import '../../../domain/session_validator.dart';
 
@@ -52,6 +53,10 @@ abstract class SessionFormState with _$SessionFormState {
 
     /// Solo con `status == error`.
     OperacionFallida? fallo,
+
+    /// Récords que bate la sesión registrada (spec 004, RF-10). Vacío al
+    /// editar.
+    @Default([]) List<TipoRecord> recordsBatidos,
   }) = _SessionFormState;
 
   /// La entrada actual difiere de la inicial (comparación por valor).
@@ -62,4 +67,14 @@ abstract class SessionFormState with _$SessionFormState {
       status == SessionFormStatus.guardada ||
       status == SessionFormStatus.actualizada ||
       status == SessionFormStatus.borrada;
+}
+
+/// Valor con el que se cierra el formulario: el estado final y los récords
+/// batidos al registrar (spec 004, RF-10).
+@freezed
+abstract class ResultadoFormulario with _$ResultadoFormulario {
+  const factory ResultadoFormulario({
+    required SessionFormStatus status,
+    @Default([]) List<TipoRecord> recordsBatidos,
+  }) = _ResultadoFormulario;
 }
