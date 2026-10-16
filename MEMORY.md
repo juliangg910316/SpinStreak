@@ -6,7 +6,7 @@
 - **Spec 003 (calendario): `implementada`** (7 tareas; validada el 2026-10-15). Botón "Calendario" en el inicio; mes con días entrenados, hoy seleccionado y sesiones del día editables.
 - **Spec 004 (récords): `implementada`** (6 tareas; validada el 2026-10-16). Pantalla "Récords" y aviso de récord al registrar.
 - Base de datos en `schemaVersion` 2 (velocidad máxima entera, migración verificada en el móvil).
-- Sin tests (`test/` no existe). Git: el autor hizo commit de la 001, la 002 y la 003 (último: `a4d5362`, 2026-10-15); **el trabajo de la 004 está sin commitear**.
+- Sin tests (`test/` no existe). Git: el autor hizo commit de las specs 001 a 004 (último: `dadf6fb`, 2026-10-16).
 
 ## Decisiones (y por qué)
 - Solo Android, uso personal y datos solo locales: es una app personal y no necesita backend.
@@ -50,4 +50,4 @@
   - Hecho: `calcularRecords`/`recordsBatidos` en domain (sin "hoy"); el formulario calcula los récords batidos antes de guardar y se cierra con `ResultadoFormulario`; formatos "32 km/h" y "160 ppm".
   - Verificado con scripts temporales y BD de prueba en el móvil (con permiso; BD original restaurada e idéntica). RF-7 solo revisando el código.
 - [ ] Más adelante (decisión del autor, 2026-10-16): **récord de calorías**. Quedó fuera de la 004 (las calorías son una estimación de la bici); requiere cambiar la spec 004 (5 récords) y seguir el flujo.
-- El MVP (specs 001 a 004) está completo. En el móvil está instalada la APK debug.
+- El MVP (specs 001 a 004) está completo. En el móvil está instalada la APK **release** desde cero (2026-10-16, a petición del autor: se desinstaló y se borraron los datos). Para leer la BD por `adb` hace falta volver a instalar la debug.
