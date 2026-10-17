@@ -3,7 +3,8 @@
 /// Solo pinta el estado de [SessionFormCubit] y le pasa lo que escribe el
 /// usuario; el `BlocProvider` lo crea el router. Al terminar (guardada,
 /// actualizada o borrada) se cierra devolviendo un [ResultadoFormulario] con
-/// ese estado y los récords batidos.
+/// ese estado y los récords batidos. Aspecto según la spec 005 (RF-19b a
+/// RF-24).
 library;
 
 import 'package:flutter/material.dart';
@@ -12,6 +13,8 @@ import 'package:intl/intl.dart';
 
 import '../../../domain/session_validator.dart';
 import '../../../utils/formatters.dart';
+import '../../core/themes/dimens.dart';
+import '../../core/ui/aviso.dart';
 import '../view_model/session_form_cubit.dart';
 import '../view_model/session_form_state.dart';
 import 'ayuda_parametro.dart';
@@ -74,24 +77,38 @@ class _SessionFormScreenState extends State<SessionFormScreen> {
             appBar: AppBar(
               title: Text(edicion ? 'Editar sesión' : 'Registrar sesión'),
               actions: [
+                // Spec 005, RF-19b: solo el icono; el tooltip da la
+                // descripción accesible "Borrar".
                 if (edicion)
-                  TextButton.icon(
+                  IconButton(
                     onPressed: guardando ? null : _confirmarBorrar,
-                    icon: const Icon(Icons.delete_outline),
-                    label: const Text('Borrar'),
+                    icon: const Icon(Icons.delete_outline_rounded),
+                    tooltip: 'Borrar',
                   ),
               ],
             ),
+            // Spec 005, RF-22: "Guardar" fijo en la parte inferior.
+            bottomNavigationBar: _BarraGuardar(
+              guardando: guardando,
+              onGuardar: cubit.guardar,
+            ),
             body: ListView(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.fromLTRB(
+                Dimens.margen,
+                8,
+                Dimens.margen,
+                24,
+              ),
               children: [
                 if (state.original case final original?)
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
+                    padding: const EdgeInsets.only(bottom: 20),
                     child: Text(
                       'Registrada el ${formatearFecha(original.fecha)} '
                       'a las ${formatearHora(original.fecha)}',
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                     ),
                   ),
                 _CampoTiempo(
@@ -115,26 +132,19 @@ class _SessionFormScreenState extends State<SessionFormScreen> {
                     error: _mensajeError(campo, state.errores[campo]),
                     onChanged: (texto) => cubit.cambiarCampo(campo, texto),
                   ),
-                TextField(
-                  controller: _nota,
-                  onChanged: cubit.cambiarNota,
-                  maxLines: 3,
-                  minLines: 1,
-                  textCapitalization: TextCapitalization.sentences,
-                  decoration: const InputDecoration(
-                    labelText: 'Nota (opcional)',
-                    border: OutlineInputBorder(),
+                // La nota no tiene ayuda: deja el hueco del ⓘ para alinearse.
+                _FilaCampo(
+                  ayuda: null,
+                  campo: TextField(
+                    controller: _nota,
+                    onChanged: cubit.cambiarNota,
+                    maxLines: 3,
+                    minLines: 1,
+                    textCapitalization: TextCapitalization.sentences,
+                    decoration: const InputDecoration(
+                      labelText: 'Nota (opcional)',
+                    ),
                   ),
-                ),
-                const SizedBox(height: 24),
-                FilledButton(
-                  onPressed: guardando ? null : cubit.guardar,
-                  child: guardando
-                      ? const SizedBox.square(
-                          dimension: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Text('Guardar'),
                 ),
               ],
             ),
@@ -159,8 +169,11 @@ class _SessionFormScreenState extends State<SessionFormScreen> {
           'No se pudo borrar la sesión. Inténtalo de nuevo.',
         _ => 'No se pudo guardar la sesión. Inténtalo de nuevo.',
       };
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(mensaje)));
+      mostrarAviso(
+        ScaffoldMessenger.of(context),
+        mensaje,
+        icono: Icons.error_outline_rounded,
+      );
     }
   }
 
@@ -177,8 +190,12 @@ class _SessionFormScreenState extends State<SessionFormScreen> {
             onPressed: () => Navigator.of(context).pop(false),
             child: const Text('Cancelar'),
           ),
+          // Spec 005, RF-24: la acción destructiva, en el color de error.
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
+            style: TextButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.error,
+            ),
             child: const Text('Borrar'),
           ),
         ],
@@ -200,6 +217,9 @@ class _SessionFormScreenState extends State<SessionFormScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
+            style: TextButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.error,
+            ),
             child: const Text('Descartar'),
           ),
         ],
@@ -262,6 +282,54 @@ String? _mensajeError(CampoSesion campo, ErrorCampo? error) {
   };
 }
 
+/// Un campo con su botón ⓘ a la derecha (spec 005, RF-20). Sin [ayuda]
+/// queda el hueco, para que todos los campos tengan el mismo ancho.
+class _FilaCampo extends StatelessWidget {
+  const _FilaCampo({required this.campo, required this.ayuda});
+
+  final Widget campo;
+  final CampoSesion? ayuda;
+
+  @override
+  Widget build(BuildContext context) {
+    final ayuda = this.ayuda;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(child: campo),
+          SizedBox(
+            width: 48,
+            height: Dimens.altoBoton,
+            child: ayuda == null ? null : AyudaParametro(campo: ayuda),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Error de un campo: icono y mensaje en el color de error (spec 005, RF-21).
+Widget? _errorCampo(BuildContext context, String? mensaje) {
+  if (mensaje == null) return null;
+  final tema = Theme.of(context);
+  final color = tema.colorScheme.error;
+  return Row(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Icon(Icons.error_outline_rounded, size: 16, color: color),
+      const SizedBox(width: 6),
+      Expanded(
+        child: Text(
+          mensaje,
+          style: tema.textTheme.labelSmall?.copyWith(color: color),
+        ),
+      ),
+    ],
+  );
+}
+
 /// Campo de tiempo de solo lectura: al tocarlo abre el selector (RF-5).
 class _CampoTiempo extends StatelessWidget {
   const _CampoTiempo({
@@ -276,21 +344,23 @@ class _CampoTiempo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: InkWell(
+    final tema = Theme.of(context);
+    final vacio = tiempo == Duration.zero;
+    return _FilaCampo(
+      ayuda: CampoSesion.tiempo,
+      campo: InkWell(
         onTap: onElegir,
+        borderRadius: BorderRadius.circular(Dimens.radioCampo),
         child: InputDecorator(
           decoration: InputDecoration(
             labelText: _etiquetas[CampoSesion.tiempo],
-            errorText: error,
-            border: const OutlineInputBorder(),
-            suffixIcon: const AyudaParametro(campo: CampoSesion.tiempo),
+            error: _errorCampo(context, error),
           ),
           child: Text(
-            tiempo == Duration.zero
-                ? 'Toca para elegir'
-                : formatearTiempo(tiempo),
+            vacio ? 'Toca para elegir' : formatearTiempo(tiempo),
+            style: tema.textTheme.bodyLarge?.copyWith(
+              color: vacio ? tema.colorScheme.onSurfaceVariant : null,
+            ),
           ),
         ),
       ),
@@ -313,9 +383,9 @@ class _CampoNumero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: TextField(
+    return _FilaCampo(
+      ayuda: campo,
+      campo: TextField(
         controller: control,
         onChanged: onChanged,
         keyboardType: TextInputType.numberWithOptions(
@@ -324,11 +394,59 @@ class _CampoNumero extends StatelessWidget {
         textInputAction: TextInputAction.next,
         decoration: InputDecoration(
           labelText: _etiquetas[campo],
-          suffixText: _unidades[campo],
-          errorText: error,
-          errorMaxLines: 2,
-          border: const OutlineInputBorder(),
-          suffixIcon: AyudaParametro(campo: campo),
+          // Spec 005, RF-20: la unidad aparece una vez escrito el valor.
+          suffixText: control.text.isEmpty ? null : _unidades[campo],
+          error: _errorCampo(context, error),
+        ),
+      ),
+    );
+  }
+}
+
+/// Botón "Guardar" a lo ancho, fijo abajo; mientras guarda, indicador
+/// circular junto al texto (spec 005, RF-22).
+class _BarraGuardar extends StatelessWidget {
+  const _BarraGuardar({required this.guardando, required this.onGuardar});
+
+  final bool guardando;
+  final VoidCallback onGuardar;
+
+  @override
+  Widget build(BuildContext context) {
+    final colores = Theme.of(context).colorScheme;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: colores.surface,
+        border: Border(top: BorderSide(color: colores.outlineVariant)),
+      ),
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.all(Dimens.margen),
+          child: FilledButton(
+            onPressed: guardando ? null : onGuardar,
+            // Mientras guarda conserva el color principal.
+            style: FilledButton.styleFrom(
+              disabledBackgroundColor: colores.primary,
+              disabledForegroundColor: colores.onPrimary,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (guardando) ...[
+                  SizedBox.square(
+                    dimension: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.5,
+                      color: colores.onPrimary,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                ],
+                const Text('Guardar'),
+              ],
+            ),
+          ),
         ),
       ),
     );

@@ -2,7 +2,8 @@
 ///
 /// Solo pinta el estado de [CalendarCubit]; el `BlocProvider` lo crea el
 /// router. La cuadrícula sale de `construirMes` (dominio): aquí solo se le da
-/// aspecto a cada celda.
+/// aspecto a cada celda. Aspecto según la spec 005 (RF-16, RF-17, RF-26 a
+/// RF-28b): cambian los estilos, no el orden ni el comportamiento.
 library;
 
 import 'package:flutter/material.dart';
@@ -12,8 +13,12 @@ import '../../../domain/calendar_month.dart';
 import '../../../domain/models/mes_calendario.dart';
 import '../../../domain/models/session.dart';
 import '../../../utils/formatters.dart';
+import '../../core/themes/colores_app.dart';
+import '../../core/themes/dimens.dart';
 import '../../core/ui/dia_historial_widgets.dart';
 import '../../core/ui/editar_sesion.dart';
+import '../../core/ui/estado_error.dart';
+import '../../core/ui/tarjeta_aviso.dart';
 import '../view_model/calendar_cubit.dart';
 import '../view_model/calendar_state.dart';
 
@@ -30,14 +35,8 @@ class CalendarScreen extends StatelessWidget {
             child: CircularProgressIndicator(),
           ),
           // RF-14.
-          CalendarStatus.error => const Center(
-            child: Padding(
-              padding: EdgeInsets.all(24),
-              child: Text(
-                'No se pudo cargar el calendario.',
-                textAlign: TextAlign.center,
-              ),
-            ),
+          CalendarStatus.error => const EstadoError(
+            'No se pudo cargar el calendario.',
           ),
           CalendarStatus.ready => _Contenido(state: state),
         },
@@ -58,10 +57,19 @@ class _Contenido extends StatelessWidget {
     final seleccionado = state.seleccionado;
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+      padding: const EdgeInsets.fromLTRB(Dimens.margen, 8, Dimens.margen, 24),
       children: [
-        // RF-13 / RC-2: sin sesiones, el calendario se ve igual con un aviso.
-        if (state.sinSesiones) const _AvisoSinSesiones(),
+        // RF-13 / RC-2: sin sesiones, el calendario se ve igual con un aviso
+        // encima (spec 005, RF-28b).
+        if (state.sinSesiones) ...[
+          const TarjetaAviso(
+            icono: Icons.calendar_month_rounded,
+            texto:
+                'Aún no hay días entrenados. Registra tu primera sesión con '
+                '«Registrar sesión» en el inicio.',
+          ),
+          const SizedBox(height: Dimens.margen),
+        ],
         _CabeceraMes(mes: mes),
         const _Iniciales(),
         for (final semana in mes.semanas)
@@ -81,15 +89,13 @@ class _Contenido extends StatelessWidget {
             ],
           ),
         const SizedBox(height: 16),
-        if (state.diaSeleccionado case final dia?) ...[
-          // RF-7: mismo formato que el historial.
-          CabeceraDia(dia: dia),
-          for (final sesion in dia.sesiones)
-            FilaSesion(
-              sesion: sesion,
-              onTap: () => _abrirEdicion(context, sesion),
-            ),
-        ] else if (seleccionado != null)
+        if (state.diaSeleccionado case final dia?)
+          // RF-7: mismo formato que el historial (spec 005, RF-28).
+          TarjetaDia(
+            dia: dia,
+            onTapSesion: (sesion) => _abrirEdicion(context, sesion),
+          )
+        else if (seleccionado != null)
           // RF-16: hoy seleccionado y sin sesiones.
           _HoySinSesiones(dia: seleccionado)
         else
@@ -97,7 +103,9 @@ class _Contenido extends StatelessWidget {
           Text(
             'Toca un día marcado para ver sus sesiones.',
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyMedium,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
       ],
     );
@@ -117,7 +125,7 @@ class _Contenido extends StatelessWidget {
 const _altoCelda = 48.0;
 
 /// Hoy seleccionado sin sesiones: la fecha, con el mismo aspecto que
-/// `CabeceraDia`, y debajo el mensaje de RF-16.
+/// `CabeceraDia`, y debajo el mensaje de RF-16 en una tarjeta neutra.
 class _HoySinSesiones extends StatelessWidget {
   const _HoySinSesiones({required this.dia});
 
@@ -125,53 +133,24 @@ class _HoySinSesiones extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tema = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Container(
-          color: tema.colorScheme.surfaceContainerHighest,
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-          margin: const EdgeInsets.only(top: 8),
-          child: Text(formatearFecha(dia), style: tema.textTheme.titleSmall),
-        ),
-        const Padding(
-          padding: EdgeInsets.all(16),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
           child: Text(
-            'Hoy aún no has entrenado. Registra una sesión con «Registrar '
-            'sesión» en el inicio.',
-            textAlign: TextAlign.center,
+            formatearFecha(dia),
+            style: Theme.of(context).textTheme.titleSmall,
           ),
         ),
-      ],
-    );
-  }
-}
-
-class _AvisoSinSesiones extends StatelessWidget {
-  const _AvisoSinSesiones();
-
-  @override
-  Widget build(BuildContext context) {
-    final colores = Theme.of(context).colorScheme;
-    return Card(
-      color: colores.secondaryContainer,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            Icon(Icons.info_outline, color: colores.onSecondaryContainer),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                'Aún no hay días entrenados. Registra tu primera sesión con '
-                '«Registrar sesión» en el inicio.',
-                style: TextStyle(color: colores.onSecondaryContainer),
-              ),
-            ),
-          ],
+        const SizedBox(height: 8),
+        const TarjetaAviso(
+          icono: Icons.today_rounded,
+          texto:
+              'Hoy aún no has entrenado. Registra una sesión con «Registrar '
+              'sesión» en el inicio.',
         ),
-      ),
+      ],
     );
   }
 }
@@ -190,7 +169,7 @@ class _CabeceraMes extends StatelessWidget {
         IconButton(
           onPressed: cubit.mesAnterior,
           tooltip: 'Mes anterior',
-          icon: const Icon(Icons.chevron_left),
+          icon: const Icon(Icons.chevron_left_rounded),
         ),
         Expanded(
           child: Text(
@@ -200,10 +179,10 @@ class _CabeceraMes extends StatelessWidget {
           ),
         ),
         IconButton(
-          // RF-3: desactivada en el mes de hoy.
+          // RF-3: desactivada en el mes de hoy (spec 005, RF-27).
           onPressed: mes.puedeAvanzar ? cubit.mesSiguiente : null,
           tooltip: 'Mes siguiente',
-          icon: const Icon(Icons.chevron_right),
+          icon: const Icon(Icons.chevron_right_rounded),
         ),
       ],
     );
@@ -216,7 +195,11 @@ class _Iniciales extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final estilo = Theme.of(context).textTheme.labelMedium;
+    final tema = Theme.of(context);
+    final estilo = tema.textTheme.labelSmall?.copyWith(
+      fontWeight: FontWeight.w700,
+      color: tema.colorScheme.onSurfaceVariant,
+    );
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
@@ -231,40 +214,51 @@ class _Iniciales extends StatelessWidget {
   }
 }
 
-/// Un día: círculo de color si está entrenado (RF-4), borde si es hoy (RF-5),
-/// número en gris si es futuro (RF-6) y anillo con sombra si está
-/// seleccionado (RF-7). Solo se pueden pulsar los días entrenados y hoy
-/// (RF-7, RF-8).
+/// Un día (spec 003, RF-4 a RF-8; spec 005, RF-26): círculo naranja con el
+/// número oscuro si está entrenado, borde interior si es hoy, número
+/// atenuado si es futuro y anillo exterior si está seleccionado. Solo se
+/// pueden pulsar los días entrenados y hoy.
 class _Celda extends StatelessWidget {
   const _Celda({required this.celda, required this.seleccionada});
 
   final CeldaDia celda;
   final bool seleccionada;
 
+  /// Anillo de selección y su separación del círculo: 40 + 2 × (1,5 + 2,5)
+  /// = 48, el alto de la celda, para que la cuadrícula no se mueva.
+  static const _anchoAnillo = 2.5;
+  static const _separacion = 1.5;
+
   @override
   Widget build(BuildContext context) {
-    final colores = Theme.of(context).colorScheme;
+    final tema = Theme.of(context);
+    final colores = tema.colorScheme;
+    final app = tema.extension<ColoresApp>()!;
     final colorNumero = celda.entrenado
         ? colores.onPrimary
         : celda.esFuturo
-        ? colores.onSurface.withValues(alpha: 0.38)
+        ? colores.onSurfaceVariant.withValues(alpha: 0.45)
         : colores.onSurface;
 
     final circulo = Container(
-      width: 40,
-      height: 40,
+      width: Dimens.circuloDia,
+      height: Dimens.circuloDia,
       alignment: Alignment.center,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: celda.entrenado ? colores.primary : null,
         border: celda.esHoy
-            ? Border.all(color: colores.tertiary, width: 2)
+            ? Border.all(color: colores.onSurface, width: 2)
             : null,
       ),
       child: Text(
         '${celda.dia.day}',
-        style: Theme.of(context).textTheme.bodyMedium
-            ?.copyWith(color: colorNumero),
+        style: tema.textTheme.labelLarge?.copyWith(
+          color: colorNumero,
+          fontWeight: celda.entrenado || celda.esHoy
+              ? FontWeight.w700
+              : FontWeight.w500,
+        ),
       ),
     );
 
@@ -275,23 +269,19 @@ class _Celda extends StatelessWidget {
           onTap: celda.seleccionable
               ? () => context.read<CalendarCubit>().seleccionarDia(celda.dia)
               : null,
-          // El anillo de selección rodea el círculo, así que se ve a la vez
-          // que el fondo de entrenado y el borde de hoy.
-          // Mismo tamaño con y sin anillo (40 + 2 × 4), para que la
-          // cuadrícula no se mueva al seleccionar.
+          // El anillo rodea el círculo, así que se ve a la vez que el fondo
+          // de entrenado y el borde de hoy.
           child: Container(
-            padding: EdgeInsets.all(seleccionada ? 1 : 4),
+            padding: EdgeInsets.all(
+              seleccionada ? _separacion : _separacion + _anchoAnillo,
+            ),
             decoration: seleccionada
                 ? BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: colores.secondary, width: 3),
-                    boxShadow: [
-                      BoxShadow(
-                        color: colores.shadow.withValues(alpha: 0.3),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+                    border: Border.all(
+                      color: app.textoPrincipal,
+                      width: _anchoAnillo,
+                    ),
                   )
                 : null,
             child: circulo,

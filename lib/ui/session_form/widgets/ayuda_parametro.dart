@@ -17,7 +17,10 @@ class AyudaParametro extends StatelessWidget {
   Widget build(BuildContext context) {
     final entrada = _glosario[campo]!;
     return IconButton(
-      icon: const Icon(Icons.info_outline),
+      icon: Icon(
+        Icons.info_outline_rounded,
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
+      ),
       tooltip: 'Qué es: ${entrada.nombre}',
       onPressed: () => showDialog<void>(
         context: context,
@@ -34,7 +37,13 @@ class _DialogoAyuda extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final titulo = Theme.of(context).textTheme.titleSmall;
+    // Spec 005, RF-24: apartados en el color del texto; el resto, con el
+    // estilo de contenido del diálogo.
+    final tema = Theme.of(context);
+    final titulo = tema.textTheme.labelLarge?.copyWith(
+      fontWeight: FontWeight.w700,
+      color: tema.colorScheme.onSurface,
+    );
     return AlertDialog(
       title: Text(entrada.nombre),
       content: SingleChildScrollView(
@@ -45,7 +54,7 @@ class _DialogoAyuda extends StatelessWidget {
             Text('Qué significa', style: titulo),
             const SizedBox(height: 4),
             Text(entrada.significado),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             Text('Para qué sirve', style: titulo),
             const SizedBox(height: 4),
             Text(entrada.utilidad),

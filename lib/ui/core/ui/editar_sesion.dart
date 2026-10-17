@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import '../../../domain/models/session.dart';
 import '../../../routing/route_names.dart';
 import '../../session_form/view_model/session_form_state.dart';
+import 'aviso.dart';
 
 /// Abre [sesion] en el formulario y, al volver, muestra "Sesión actualizada"
 /// o "Sesión borrada".
@@ -24,13 +25,20 @@ Future<SessionFormStatus?> editarSesion(
     arguments: sesion,
   ))?.status;
 
-  final mensaje = switch (resultado) {
-    SessionFormStatus.actualizada => 'Sesión actualizada',
-    SessionFormStatus.borrada => 'Sesión borrada',
+  // Spec 005, RF-19: check al actualizar, papelera al borrar.
+  final aviso = switch (resultado) {
+    SessionFormStatus.actualizada => (
+      'Sesión actualizada',
+      Icons.check_circle_rounded,
+    ),
+    SessionFormStatus.borrada => (
+      'Sesión borrada',
+      Icons.delete_outline_rounded,
+    ),
     _ => null,
   };
-  if (mensaje != null) {
-    messenger.showSnackBar(SnackBar(content: Text(mensaje)));
+  if (aviso case (final mensaje, final icono)) {
+    mostrarAviso(messenger, mensaje, icono: icono);
   }
   return resultado;
 }

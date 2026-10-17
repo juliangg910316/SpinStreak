@@ -2,7 +2,9 @@
 ///
 /// Se muestra en una hoja inferior con [mostrarTiempoPicker]. No deja pasar
 /// de [LimitesTiempo.maximo] (05:00:00): con 5 horas, los minutos y los
-/// segundos solo pueden ser 0. No depende de ningún Cubit.
+/// segundos solo pueden ser 0. No depende de ningún Cubit. Aspecto según la
+/// spec 005 (RF-23): cabeceras encima de las ruedas y una banda detrás del
+/// valor elegido.
 library;
 
 import 'package:flutter/cupertino.dart';
@@ -17,7 +19,6 @@ Future<Duration?> mostrarTiempoPicker(
   required Duration inicial,
 }) => showModalBottomSheet<Duration>(
   context: context,
-  showDragHandle: true,
   builder: (_) => TiempoPicker(inicial: inicial),
 );
 
@@ -81,44 +82,76 @@ class _TiempoPickerState extends State<TiempoPicker> {
 
   @override
   Widget build(BuildContext context) {
+    final tema = Theme.of(context);
+    final etiqueta = tema.textTheme.bodySmall?.copyWith(
+      fontWeight: FontWeight.w700,
+      color: tema.colorScheme.onSurfaceVariant,
+    );
+
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        padding: const EdgeInsets.fromLTRB(24, 0, 24, 20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text('Tiempo', style: Theme.of(context).textTheme.titleLarge),
-            const SizedBox(height: 8),
+            Text('Tiempo', style: tema.textTheme.titleLarge),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                for (final unidad in const ['h', 'min', 's'])
+                  Expanded(
+                    child: Text(
+                      unidad,
+                      textAlign: TextAlign.center,
+                      style: etiqueta,
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 4),
             SizedBox(
               height: _alturaFila * 5,
-              child: Row(
+              child: Stack(
+                alignment: Alignment.center,
                 children: [
-                  _Columna(
-                    etiqueta: 'h',
-                    controller: _ctrlHoras,
-                    cantidad: _maxHoras + 1,
-                    alturaFila: _alturaFila,
-                    onCambio: _cambiarHoras,
+                  // Banda detrás de la fila del valor elegido.
+                  Container(
+                    height: _alturaFila + 4,
+                    decoration: BoxDecoration(
+                      color: tema.colorScheme.primaryContainer,
+                      borderRadius: BorderRadius.circular(14),
+                    ),
                   ),
-                  _Columna(
-                    etiqueta: 'min',
-                    controller: _ctrlMinutos,
-                    cantidad: _enMaximo ? 1 : 60,
-                    alturaFila: _alturaFila,
-                    onCambio: (m) => setState(() => _minutos = m),
-                  ),
-                  _Columna(
-                    etiqueta: 's',
-                    controller: _ctrlSegundos,
-                    cantidad: _enMaximo ? 1 : 60,
-                    alturaFila: _alturaFila,
-                    onCambio: (s) => setState(() => _segundos = s),
+                  Row(
+                    children: [
+                      _Columna(
+                        controller: _ctrlHoras,
+                        cantidad: _maxHoras + 1,
+                        seleccionado: _horas,
+                        alturaFila: _alturaFila,
+                        onCambio: _cambiarHoras,
+                      ),
+                      _Columna(
+                        controller: _ctrlMinutos,
+                        cantidad: _enMaximo ? 1 : 60,
+                        seleccionado: _minutos,
+                        alturaFila: _alturaFila,
+                        onCambio: (m) => setState(() => _minutos = m),
+                      ),
+                      _Columna(
+                        controller: _ctrlSegundos,
+                        cantidad: _enMaximo ? 1 : 60,
+                        seleccionado: _segundos,
+                        alturaFila: _alturaFila,
+                        onCambio: (s) => setState(() => _segundos = s),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -135,6 +168,13 @@ class _TiempoPickerState extends State<TiempoPicker> {
                       seconds: _segundos,
                     ),
                   ),
+                  style: FilledButton.styleFrom(
+                    minimumSize: const Size(64, 44),
+                    shape: const StadiumBorder(),
+                    textStyle: tema.textTheme.labelLarge?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                   child: const Text('Aceptar'),
                 ),
               ],
@@ -146,39 +186,43 @@ class _TiempoPickerState extends State<TiempoPicker> {
   }
 }
 
-/// Una columna del selector (0 … [cantidad] − 1) con su unidad debajo.
+/// Una rueda del selector (0 … [cantidad] − 1). El valor [seleccionado] va
+/// más grande y en el color del texto; el resto, en gris.
 class _Columna extends StatelessWidget {
   const _Columna({
-    required this.etiqueta,
     required this.controller,
     required this.cantidad,
+    required this.seleccionado,
     required this.alturaFila,
     required this.onCambio,
   });
 
-  final String etiqueta;
   final FixedExtentScrollController controller;
   final int cantidad;
+  final int seleccionado;
   final double alturaFila;
   final ValueChanged<int> onCambio;
 
   @override
   Widget build(BuildContext context) {
+    final textos = Theme.of(context).textTheme;
+    final gris = Theme.of(context).colorScheme.onSurfaceVariant;
     return Expanded(
-      child: Column(
-        children: [
-          Expanded(
-            child: CupertinoPicker.builder(
-              scrollController: controller,
-              itemExtent: alturaFila,
-              onSelectedItemChanged: onCambio,
-              childCount: cantidad,
-              itemBuilder: (context, i) =>
-                  Center(child: Text(i.toString().padLeft(2, '0'))),
-            ),
+      child: CupertinoPicker.builder(
+        scrollController: controller,
+        itemExtent: alturaFila,
+        onSelectedItemChanged: onCambio,
+        childCount: cantidad,
+        // La banda la pinta el selector, detrás de las ruedas.
+        selectionOverlay: null,
+        itemBuilder: (context, i) => Center(
+          child: Text(
+            i.toString().padLeft(2, '0'),
+            style: i == seleccionado
+                ? textos.titleLarge
+                : textos.bodyLarge?.copyWith(color: gris),
           ),
-          Text(etiqueta, style: Theme.of(context).textTheme.labelLarge),
-        ],
+        ),
       ),
     );
   }

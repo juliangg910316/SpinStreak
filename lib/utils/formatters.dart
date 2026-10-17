@@ -23,23 +23,23 @@ String formatearTiempo(Duration tiempo) {
   return '$horas:$minutos:$segundos';
 }
 
+/// "1.234,5": número con hasta 2 decimales y sin unidad (valor de un récord).
+String formatearDecimal(double n) => NumberFormat('#,##0.##').format(n);
+
 /// "1.234,5 km" (hasta 2 decimales).
-String formatearKm(double km) => '${NumberFormat('#,##0.##').format(km)} km';
+String formatearKm(double km) => '${formatearDecimal(km)} km';
 
 /// "23,4 km/h" (un decimal, redondeado).
 String formatearKmh(double kmh) =>
     '${NumberFormat('#,##0.0').format(kmh)} km/h';
 
-/// "32 km/h" (velocidad máxima, entera).
-String formatearVelocidadMax(int kmh) =>
-    '${NumberFormat('#,##0').format(kmh)} km/h';
-
-/// "160 ppm".
-String formatearPulso(int ppm) => '${NumberFormat('#,##0').format(ppm)} ppm';
+/// "1.000": entero con punto de miles también en 4 cifras (el patrón
+/// decimal de `es` no agrupa los números de 4 cifras).
+String formatearEntero(int n) => NumberFormat('#,##0').format(n);
 
 /// "1 día", "12 días", "1.000 días" (singular solo con 1).
 String formatearDias(int dias) =>
-    dias == 1 ? '1 día' : '${NumberFormat('#,##0').format(dias)} días';
+    dias == 1 ? '1 día' : '${formatearEntero(dias)} días';
 
 /// "610 kcal".
 String formatearKcal(int kcal) => '${NumberFormat('#,##0').format(kcal)} kcal';
