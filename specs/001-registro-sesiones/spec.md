@@ -61,7 +61,7 @@ Los datos de la pantalla de la bici estática se pierden al apagarla. El usuario
 - **Inicio → Registrar sesión**: un botón flotante "Registrar sesión" en la pantalla de inicio abre el formulario vacío.
 - **Inicio → Historial**: un botón "Historial" en la pantalla de inicio.
 - **Historial → Editar sesión**: tocar una sesión abre el mismo formulario con sus datos y el título "Editar sesión".
-- **Borrar**: botón "Borrar" dentro del formulario de edición, con confirmación (RF-15).
+- **Borrar**: botón con el icono de papelera (descripción accesible "Borrar") en la barra superior del formulario de edición, con confirmación (RF-15). Aspecto según la spec 005.
 - **Tras guardar una sesión nueva**: vuelve al inicio, con la racha actualizada y el mensaje "Sesión guardada".
 - **Tras editar o borrar**: vuelve al historial, actualizado, con el mensaje "Sesión actualizada" o "Sesión borrada".
 - **Atrás desde el formulario**: si hay cambios sin guardar, aplica RF-16.

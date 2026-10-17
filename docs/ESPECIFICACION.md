@@ -6,7 +6,7 @@
 
 ## 1. Descripción
 
-Aplicación Flutter para Android que guarda los entrenamientos diarios en bicicleta estática y sigue la constancia. Al terminar cada sesión, los datos se copian a mano desde la pantalla de la bici. La app convierte esos datos en rachas, estadísticas y récords para tener ganas de volver a entrenar al día siguiente.
+Aplicación Flutter para Android e iOS que guarda los entrenamientos diarios en bicicleta estática y sigue la constancia. Al terminar cada sesión, los datos se copian a mano desde la pantalla de la bici. La app convierte esos datos en rachas, estadísticas y récords para tener ganas de volver a entrenar al día siguiente.
 
 ### Problema
 Los datos de la pantalla de la bici se pierden al apagarla. Las apps generalistas (Strava, Fitbit, Google Fit) permiten registros manuales, pero no tienen campos propios de la bici estática (odómetro, velocidad máxima) ni rachas pensadas para el hábito diario.
@@ -21,7 +21,7 @@ Los datos de la pantalla de la bici se pierden al apagarla. Las apps generalista
 
 | Tema | Decisión |
 | --- | --- |
-| Plataforma | Solo Android |
+| Plataforma | Android e iOS |
 | Uso | Personal (no se publica por ahora) |
 | Datos | Solo locales, sin nube ni sincronización |
 | Racha | Estrictamente diaria, sin comodines ni días de descanso |
@@ -87,6 +87,7 @@ Orden de implementación: 001 → 002 → 003 y 004.
 | [002 — Rachas](../specs/002-rachas/spec.md) | Racha actual, mejor racha, total de días y pantalla de inicio |
 | [003 — Calendario](../specs/003-calendario/spec.md) | Calendario o heatmap de días entrenados |
 | [004 — Récords](../specs/004-records/spec.md) | Récords personales por sesión |
+| [005 — Diseño visual](../specs/005-diseno-pantallas/spec.md) | Paleta "Fuego", modo claro y oscuro, contraste y diseño de todas las pantallas |
 
 ### v2
 - Ver la evolución de las métricas: totales y gráficas por semana y mes.
