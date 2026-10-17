@@ -71,4 +71,4 @@ Por decisión del autor, el proyecto **no tiene tests** por ahora: no los crees.
 ## Validación
 Sin tests, cada RF se verifica:
 - **Lógica pura** (`lib/domain/`): revisando el código contra el RF, caso por caso, incluidos los casos límite.
-- **Interfaz**: con un recorrido manual en el emulador o dispositivo Android (`flutter run`). Indica los pasos exactos para que el autor los ejecute y confirme el resultado.
+- **Interfaz**: con un recorrido manual en un emulador, simulador o dispositivo Android o iOS (`flutter run`). Indica los pasos exactos para que el autor los ejecute y confirme el resultado.

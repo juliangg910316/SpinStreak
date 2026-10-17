@@ -6,10 +6,11 @@
 - **Spec 003 (calendario): `implementada`** (7 tareas; validada el 2026-10-15). Botón "Calendario" en el inicio; mes con días entrenados, hoy seleccionado y sesiones del día editables.
 - **Spec 004 (récords): `implementada`** (6 tareas; validada el 2026-10-16). Pantalla "Récords" y aviso de récord al registrar.
 - Base de datos en `schemaVersion` 2 (velocidad máxima entera, migración verificada en el móvil).
+- **Spec 005 (diseño visual): `implementada`** (9 tareas; validada el 2026-10-17 con el recorrido del autor en el simulador de iOS). Paleta "Fuego" en claro y oscuro (`ColorScheme` a mano + `ColoresApp`), Figtree y Bricolage Grotesque en `assets/fonts/`, widgets compartidos `TarjetaAviso`/`EstadoError`/`mostrarAviso`/`TarjetaDia`. Diseño de referencia: https://claude.ai/artifact/Lb8Ea2k8nbwZStQ324fmuc. Las comprobaciones visuales se hacen en el simulador de iOS (`xcrun simctl ui booted appearance dark|light`, `xcrun simctl io booted screenshot`); para ver una pantalla sin tocar, cambiar temporalmente `initialRoute`. No puedo tocar el simulador: lo interactivo lo prueba el autor. 
 - Sin tests (`test/` no existe). Git: el autor hizo commit de las specs 001 a 004 (último: `dadf6fb`, 2026-10-16).
 
 ## Decisiones (y por qué)
-- Solo Android, uso personal y datos solo locales: es una app personal y no necesita backend.
+- Android e iOS (antes solo Android; iOS añadido por el autor el 2026-10-17), uso personal y datos solo locales: es una app personal y no necesita backend.
 - Racha estrictamente diaria, sin comodines: así lo decidió el autor.
 - No se registran días pasados: evita "rellenar" una racha rota. **Riesgo aceptado**: una sesión sin registrar o borrada por error rompe la racha sin remedio.
 - Sin copia de seguridad hasta la v2: **riesgo aceptado** de perder datos al desinstalar o cambiar de móvil.
@@ -30,7 +31,7 @@
 ## Errores a evitar
 - No controlar el móvil del autor con `adb shell input` (toques y texto a ciegas): otra app puede pasar a primer plano y recibir la entrada. Para comprobaciones visuales, pedírselas al autor; `adb` solo para instalar, capturar pantalla o leer la BD.
 - RC-3 incluye los textos propios de Flutter/Material: `intl` no basta. Revisarlo en cada plan.
-- Antes de un "Hecho cuando" visual, comprobar con `flutter devices` que hay un dispositivo Android.
+- Antes de un "Hecho cuando" visual, comprobar con `flutter devices` que hay un dispositivo (móvil Android o simulador de iOS).
 - Probar migraciones sin tocar datos reales: copiar la BD del móvil (`adb exec-out run-as com.juliangg.spin_streak cat app_flutter/spinstreak.sqlite`), meter una BD de prueba, instalar con `adb install -r`, abrir, traer la BD, inspeccionarla con `node:sqlite` y restaurar el original. En Git Bash usar `MSYS_NO_PATHCONV=1`. `run-as` solo funciona con la APK **debug** instalada (con la release falla con "package not debuggable"); se puede instalar encima con `adb install -r` sin perder datos (misma firma). El móvil puede desconectarse a mitad de la prueba: guardar siempre la copia original **antes** y, si se pierde la conexión, avisar al autor de que no toque datos hasta restaurarla.
 - Si una tarea solo se puede probar desde una pantalla que aún no existe, decidir con el autor si se pospone la comprobación (se hizo en T8 y T9, verificadas en T10).
 

@@ -12,7 +12,7 @@ Aquí solo va el detalle extra para Claude Code. Si cambian las reglas generales
 
 - Decisiones completas de arquitectura: `.ia/memories/flutter_architecture.memory.json`. Reglas detalladas por tema en `.claude/rules/` (se cargan automáticamente).
 - SDK Dart `^3.13.3`: dot shorthands y parámetros con nombre privados (`this._campo`).
-- Lints: `flutter_lints` + reglas extra en `analysis_options.yaml` (comillas simples, `const`, trailing commas, `final` locales…). Se excluyen `build/`, `android/` y `**/*.g.dart`.
+- Lints: `flutter_lints` + reglas extra en `analysis_options.yaml` (comillas simples, `const`, trailing commas, `final` locales…). Se excluyen `build/`, `android/`, `ios/`, `**/*.g.dart` y `**/*.freezed.dart`.
 ## Flujo de datos (UI → datos)
 
 - `lib/ui/<feature>/widgets/` pinta el estado con `BlocBuilder`; `lib/ui/<feature>/view_model/` tiene el Cubit y su estado inmutable. El Cubit carga los datos con `cargar()` (`Future<Result<T>>`, sin streams), recarga tras cada acción y no contiene reglas de negocio.

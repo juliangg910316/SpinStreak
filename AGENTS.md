@@ -1,5 +1,5 @@
 # AGENTS.md -- SpinStreak
-App Flutter solo para Android y de uso personal: registra a diario las sesiones de bicicleta estática y motiva con la racha de días consecutivos. Proyecto de portafolio. Principios innegociables en `docs/constitution.md` (stack, spec, capas, datos e idioma); visión en `docs/ESPECIFICACION.md`; requisitos en `specs/`.
+App Flutter para Android e iOS, de uso personal: registra a diario las sesiones de bicicleta estática y motiva con la racha de días consecutivos. Proyecto de portafolio. Principios innegociables en `docs/constitution.md` (stack, spec, capas, datos e idioma); visión en `docs/ESPECIFICACION.md`; requisitos en `specs/`.
 
 ## Stack y estructura
 - Flutter (Dart `^3.13.3`) · `flutter_bloc` (un Cubit por pantalla) · `get_it` · `drift` (SQLite local) · `intl` + `flutter_localizations` (es; también los textos propios de Flutter) · `freezed` (todos los modelos de dominio y estados de Cubit) · rutas nombradas nativas.
@@ -33,7 +33,7 @@ flutter run
 
 ## Verificación
 - `dart format .` sin cambios y `flutter analyze` sin errores ni avisos; si cambian tablas, migración + `build_runner`; si cambia una clase `@freezed`, `build_runner`.
-- Recorrido manual en el emulador o dispositivo Android con `flutter run`.
+- Recorrido manual en un emulador, simulador o dispositivo (Android o iOS) con `flutter run`.
 
 ## Memoria
 - Al empezar, lee `MEMORY.md`. Al terminar una tarea, actualízalo: estado, decisiones (con su porqué) y errores a evitar.

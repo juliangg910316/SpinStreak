@@ -1,6 +1,6 @@
 # SpinStreak
 
-App Android, hecha en Flutter, para registrar a diario los entrenamientos en **bicicleta estática** y mantener la motivación con **rachas de días consecutivos**, récords personales y progreso visible.
+App para Android e iOS, hecha en Flutter, para registrar a diario los entrenamientos en **bicicleta estática** y mantener la motivación con **rachas de días consecutivos**, récords personales y progreso visible.
 
 > Proyecto personal y de portafolio.
 
