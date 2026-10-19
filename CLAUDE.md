@@ -25,4 +25,4 @@ Aquí solo va el detalle extra para Claude Code. Si cambian las reglas generales
 
 ## Documentación del proyecto (vault de Obsidian)
 
-Nota del proyecto (archivada el 2026-10-16): `D:\Obsidian Vault\04 - Archive\Projects\SpinStreak\`.
+Nota del proyecto: `01 - Projects/SpinStreak/Proyecto - Rueda Viva.md` dentro del vault (Windows: `D:\Obsidian Vault\`; Mac: `~/Documents/DriveSalva/Obsidian Vault/`).
