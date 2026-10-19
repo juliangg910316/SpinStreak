@@ -1,5 +1,5 @@
-# AGENTS.md -- SpinStreak
-App Flutter para Android e iOS, de uso personal: registra a diario las sesiones de bicicleta estática y motiva con la racha de días consecutivos. Proyecto de portafolio. Principios innegociables en `docs/constitution.md` (stack, spec, capas, datos e idioma); visión en `docs/ESPECIFICACION.md`; requisitos en `specs/`.
+# AGENTS.md -- Rueda Viva (SpinStreak)
+**Rueda Viva** (nombre de trabajo y repositorio: SpinStreak; paquete `spin_streak`) es una app Flutter para Android e iOS, de uso personal: registra a diario las sesiones de bicicleta estática y motiva con la racha de días consecutivos. Proyecto de portafolio. Principios innegociables en `docs/constitution.md` (stack, spec, capas, datos e idioma); visión en `docs/ESPECIFICACION.md`; requisitos en `specs/`.
 
 ## Stack y estructura
 - Flutter (Dart `^3.13.3`) · `flutter_bloc` (un Cubit por pantalla) · `get_it` · `drift` (SQLite local) · `intl` + `flutter_localizations` (es; también los textos propios de Flutter) · `freezed` (todos los modelos de dominio y estados de Cubit) · rutas nombradas nativas.

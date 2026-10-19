@@ -30,7 +30,7 @@ Las pantallas del MVP (specs 001 a 004) funcionan, pero usan los colores por def
 - **Color principal**: el de los botones de acción principales y los elementos destacados de la interfaz.
 - **Acento de la racha**: el color reservado para la racha (números de racha actual y mejor racha, y su icono de llama). No se usa para nada más.
 - **Contraste**: relación de contraste según WCAG 2.1. Texto normal: mínimo 4,5:1. Texto grande (≥ 24 px, o ≥ 18,5 px en negrita) e iconos: mínimo 3:1.
-- **Diseño de referencia**: el lienzo "SpinStreak · Inicio" (https://claude.ai/artifact/Lb8Ea2k8nbwZStQ324fmuc). Contiene, en modo claro y oscuro: el inicio con los 4 estados del mensaje del día; el formulario (alta, edición, errores, guardando, hoja "Tiempo", diálogos y avisos); el historial, el calendario y los récords con sus estados (vacío, error, carga y avisos); y una hoja con colores, tipografía, medidas e iconos. Si el diseño y esta spec (o las specs 001 a 004) no coinciden, mandan las specs.
+- **Diseño de referencia**: el lienzo "Rueda Viva · Diseño de la app" (antes "SpinStreak · Inicio"; https://claude.ai/artifact/Lb8Ea2k8nbwZStQ324fmuc). Contiene, en modo claro y oscuro: el inicio con los 4 estados del mensaje del día; el formulario (alta, edición, errores, guardando, hoja "Tiempo", diálogos y avisos); el historial, el calendario y los récords con sus estados (vacío, error, carga y avisos); y una hoja con colores, tipografía, medidas e iconos. Si el diseño y esta spec (o las specs 001 a 004) no coinciden, mandan las specs.
 - **Pantalla secundaria**: historial, calendario, récords y formulario. Tienen barra superior con flecha de volver y su título.
 
 ### Colores por modo
@@ -81,7 +81,7 @@ Las pantallas del MVP (specs 001 a 004) funcionan, pero usan los colores por def
 - RF-8: CUANDO el usuario cambia el modo claro u oscuro del móvil, EL SISTEMA aplica el modo nuevo sin reiniciar la app.
 
 ### Pantalla de inicio
-- RF-9: EL SISTEMA muestra en el inicio, de arriba abajo: el título "SpinStreak" (con "Streak" en el color principal), la fecha de hoy, el mensaje del día, la tarjeta de la racha actual, las tarjetas de mejor racha y días entrenados (una al lado de la otra) y, bajo el encabezado "Explorar", los accesos "Historial", "Calendario" y "Récords" (en una fila de tres).
+- RF-9: EL SISTEMA muestra en el inicio, de arriba abajo: el título "SpinStreak" (con "Streak" en el color principal; la spec 006 lo cambia por el logo y "Rueda Viva"), la fecha de hoy, el mensaje del día, la tarjeta de la racha actual, las tarjetas de mejor racha y días entrenados (una al lado de la otra) y, bajo el encabezado "Explorar", los accesos "Historial", "Calendario" y "Récords" (en una fila de tres).
 - RF-10: EL SISTEMA muestra la racha actual en una tarjeta propia, centrada, con el icono de llama, el número en 80 px, la etiqueta "Racha actual" y debajo la unidad "día seguido" si la racha es 1 o "días seguidos" en otro caso.
 - RF-10b: EL SISTEMA muestra junto al número de la mejor racha y de los días entrenados la unidad "día" si el valor es 1 o "días" en otro caso.
 - RF-11: EL SISTEMA muestra cada estado del mensaje del día con su icono y su color: "Bienvenida" (mano, neutro), "A salvo" (check, color principal suave), "Riesgo" (aviso, ámbar) y "Reiniciada" (reinicio, neutro), con los mismos textos que define la spec 002.

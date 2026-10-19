@@ -1,4 +1,4 @@
-# Especificación funcional — SpinStreak
+# Especificación funcional — Rueda Viva
 
 *Versión inicial: 2026-10-10*
 
@@ -6,7 +6,7 @@
 
 ## 1. Descripción
 
-Aplicación Flutter para Android e iOS que guarda los entrenamientos diarios en bicicleta estática y sigue la constancia. Al terminar cada sesión, los datos se copian a mano desde la pantalla de la bici. La app convierte esos datos en rachas, estadísticas y récords para tener ganas de volver a entrenar al día siguiente.
+**Rueda Viva** (nombre de trabajo: SpinStreak) es una aplicación Flutter para Android e iOS que guarda los entrenamientos diarios en bicicleta estática y sigue la constancia. Al terminar cada sesión, los datos se copian a mano desde la pantalla de la bici. La app convierte esos datos en rachas, estadísticas y récords para tener ganas de volver a entrenar al día siguiente.
 
 ### Problema
 Los datos de la pantalla de la bici se pierden al apagarla. Las apps generalistas (Strava, Fitbit, Google Fit) permiten registros manuales, pero no tienen campos propios de la bici estática (odómetro, velocidad máxima) ni rachas pensadas para el hábito diario.
@@ -21,6 +21,7 @@ Los datos de la pantalla de la bici se pierden al apagarla. Las apps generalista
 
 | Tema | Decisión |
 | --- | --- |
+| Nombre | "Rueda Viva", con el logo de la rueda de bici (spec 006). El repositorio y los identificadores internos siguen como `spin_streak` |
 | Plataforma | Android e iOS |
 | Uso | Personal (no se publica por ahora) |
 | Datos | Solo locales, sin nube ni sincronización |
@@ -88,6 +89,7 @@ Orden de implementación: 001 → 002 → 003 y 004.
 | [003 — Calendario](../specs/003-calendario/spec.md) | Calendario o heatmap de días entrenados |
 | [004 — Récords](../specs/004-records/spec.md) | Récords personales por sesión |
 | [005 — Diseño visual](../specs/005-diseno-pantallas/spec.md) | Paleta "Fuego", modo claro y oscuro, contraste y diseño de todas las pantallas |
+| [006 — Nombre y logo](../specs/006-nombre-logo/spec.md) | Nombre "Rueda Viva", icono de la app en Android e iOS y logo en el inicio |
 
 ### v2
 - Ver la evolución de las métricas: totales y gráficas por semana y mes.

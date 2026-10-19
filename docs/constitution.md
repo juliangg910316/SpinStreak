@@ -1,4 +1,4 @@
-# Constitución -- SpinStreak
+# Constitución -- Rueda Viva
 Principios innegociables. Si una spec, un plan o una tarea los contradice, gana la constitución. Cambiarla requiere la aprobación del autor.
 
 1. **Stack mínimo.** Flutter + flutter_bloc + get_it + drift + intl + freezed (modelos y estados inmutables). Nada de dependencias nuevas, backend ni HTTP sin aprobación del autor.
