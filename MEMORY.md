@@ -1,13 +1,14 @@
-# MEMORY.md -- SpinStreak
+# MEMORY.md -- Rueda Viva (SpinStreak)
 
-## Estado actual (2026-10-16)
+## Estado actual (2026-10-19)
 - **Spec 001 (registro de sesiones): `implementada`** (11 tareas; validada el 2026-10-13). Hay formulario de alta y edición, selector de tiempo, ayuda ⓘ, historial por día con totales, borrado con confirmación y navegación desde el inicio.
 - **Spec 002 (rachas): `implementada`** (4 tareas; validada el 2026-10-14). El inicio muestra la fecha, un "mensaje del día" (bienvenida, a salvo, riesgo o racha reiniciada) y los contadores, y recalcula al volver la app al primer plano.
 - **Spec 003 (calendario): `implementada`** (7 tareas; validada el 2026-10-15). Botón "Calendario" en el inicio; mes con días entrenados, hoy seleccionado y sesiones del día editables.
 - **Spec 004 (récords): `implementada`** (6 tareas; validada el 2026-10-16). Pantalla "Récords" y aviso de récord al registrar.
 - Base de datos en `schemaVersion` 2 (velocidad máxima entera, migración verificada en el móvil).
 - **Spec 005 (diseño visual): `implementada`** (9 tareas; validada el 2026-10-17 con el recorrido del autor en el simulador de iOS). Paleta "Fuego" en claro y oscuro (`ColorScheme` a mano + `ColoresApp`), Figtree y Bricolage Grotesque en `assets/fonts/`, widgets compartidos `TarjetaAviso`/`EstadoError`/`mostrarAviso`/`TarjetaDia`. Diseño de referencia: https://claude.ai/artifact/Lb8Ea2k8nbwZStQ324fmuc. Las comprobaciones visuales se hacen en el simulador de iOS (`xcrun simctl ui booted appearance dark|light`, `xcrun simctl io booted screenshot`); para ver una pantalla sin tocar, cambiar temporalmente `initialRoute`. No puedo tocar el simulador: lo interactivo lo prueba el autor. 
-- Sin tests (`test/` no existe). Git: el autor hizo commit de las specs 001 a 004 (último: `dadf6fb`, 2026-10-16).
+- **Spec 006 (nombre y logo): spec, plan y tareas `aprobada`; T1 a T6 hechas** (2026-10-19). Nombre "Rueda Viva" y logo C (rueda de 7 radios con la llama de buje), elegidos por el autor. Iconos de Android e iOS generados con `tool/generar_iconos.sh --instalar` (Chrome headless, sin dependencias) desde `docs/marca/simbolo.svg`; `SimboloRueda` repite la geometría en Dart. Icono oscuro de iOS con fondo transparente (decisión del autor). No se cambian los identificadores (`com.juliangg.spin_streak`, `spinStreak`, BD `spinstreak`): cambiarlos instalaría otra app o perdería los datos. **Falta para validarla**: que el autor vea el icono, el nombre y los iconos temáticos en su Android (y el nombre en las apps recientes), y los iconos oscuro y tintado de iOS (se cambian en «Personalizar», no con `simctl ui appearance`).
+- Sin tests (`test/` no existe). Git: la spec 006 tiene commit (4 commits desde `9a3283d`, 2026-10-19), sin validar aún.
 
 ## Decisiones (y por qué)
 - Android e iOS (antes solo Android; iOS añadido por el autor el 2026-10-17), uso personal y datos solo locales: es una app personal y no necesita backend.
@@ -32,6 +33,7 @@
 - No controlar el móvil del autor con `adb shell input` (toques y texto a ciegas): otra app puede pasar a primer plano y recibir la entrada. Para comprobaciones visuales, pedírselas al autor; `adb` solo para instalar, capturar pantalla o leer la BD.
 - RC-3 incluye los textos propios de Flutter/Material: `intl` no basta. Revisarlo en cada plan.
 - Antes de un "Hecho cuando" visual, comprobar con `flutter devices` que hay un dispositivo (móvil Android o simulador de iOS).
+- En el Mac no hay `node`: la BD del simulador de iOS (`xcrun simctl get_app_container booted com.juliangg.spinStreak data` → `Documents/spinstreak.sqlite`) se lee con `python3` + `sqlite3` en solo lectura (`?mode=ro`).
 - Probar migraciones sin tocar datos reales: copiar la BD del móvil (`adb exec-out run-as com.juliangg.spin_streak cat app_flutter/spinstreak.sqlite`), meter una BD de prueba, instalar con `adb install -r`, abrir, traer la BD, inspeccionarla con `node:sqlite` y restaurar el original. En Git Bash usar `MSYS_NO_PATHCONV=1`. `run-as` solo funciona con la APK **debug** instalada (con la release falla con "package not debuggable"); se puede instalar encima con `adb install -r` sin perder datos (misma firma). El móvil puede desconectarse a mitad de la prueba: guardar siempre la copia original **antes** y, si se pierde la conexión, avisar al autor de que no toque datos hasta restaurarla.
 - Si una tarea solo se puede probar desde una pantalla que aún no existe, decidir con el autor si se pospone la comprobación (se hizo en T8 y T9, verificadas en T10).
 
