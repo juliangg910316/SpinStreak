@@ -1,6 +1,6 @@
 /// Pantalla de inicio: fecha de hoy, mensaje del día, racha actual, mejor
 /// racha y total de días (spec 002), con el diseño de la spec 005 (RF-9 a
-/// RF-14).
+/// RF-14) y el logo y el nombre de la app en la barra (spec 006).
 ///
 /// Solo pinta el estado de [HomeCubit]; el `BlocProvider` lo crea el router.
 /// Desde aquí se registra una sesión y se abren el historial (spec 001) y el
@@ -20,6 +20,7 @@ import '../../core/themes/colores_app.dart';
 import '../../core/themes/dimens.dart';
 import '../../core/ui/aviso.dart';
 import '../../core/ui/estado_error.dart';
+import '../../core/ui/simbolo_rueda.dart';
 import '../../core/ui/tarjeta_aviso.dart';
 import '../../session_form/view_model/session_form_state.dart';
 import '../view_model/home_cubit.dart';
@@ -56,18 +57,32 @@ class _HomeScreenState extends State<HomeScreen> {
     final app = tema.extension<ColoresApp>()!;
 
     return Scaffold(
-      // Spec 005, RF-9: "Streak" en el color principal.
+      // Spec 006, RF-9 a RF-11: símbolo de 32 px y "Rueda Viva", con "Viva"
+      // en el color principal. Con el texto del sistema muy grande, el
+      // nombre se reduce en vez de cortarse; el símbolo no cambia.
       appBar: AppBar(
-        title: Text.rich(
-          TextSpan(
-            text: 'Spin',
-            children: [
-              TextSpan(
-                text: 'Streak',
-                style: TextStyle(color: app.textoPrincipal),
+        title: Row(
+          children: [
+            const SimboloRueda(tamano: 32),
+            const SizedBox(width: 10),
+            Flexible(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: AlignmentDirectional.centerStart,
+                child: Text.rich(
+                  TextSpan(
+                    text: 'Rueda ',
+                    children: [
+                      TextSpan(
+                        text: 'Viva',
+                        style: TextStyle(color: app.textoPrincipal),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
       // Con el texto del sistema muy grande, el botón no cabría en la

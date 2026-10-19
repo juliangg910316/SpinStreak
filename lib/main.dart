@@ -46,7 +46,9 @@ class SpinStreakApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'SpinStreak',
+      // Spec 006, RF-2: nombre en las apps recientes de Android.
+      title: 'Rueda Viva',
+      debugShowCheckedModeBanner: false,
       // Spec 005: paleta "Fuego"; sigue el modo claro u oscuro del móvil y
       // cambia sin reiniciar (RF-6 a RF-8).
       theme: AppTheme.light,

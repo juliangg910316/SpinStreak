@@ -16,6 +16,7 @@ class ColoresApp extends ThemeExtension<ColoresApp> {
     required this.botonTexto,
     required this.avisoRecord,
     required this.onAvisoRecord,
+    required this.logoRueda,
   });
 
   /// Acento de la racha: solo números de racha (≥ 24 px) y su llama (RF-4).
@@ -35,6 +36,10 @@ class ColoresApp extends ThemeExtension<ColoresApp> {
   final Color avisoRecord;
   final Color onAvisoRecord;
 
+  /// Rueda del símbolo de la app (spec 006, RF-10). La llama usa `primary`
+  /// y el fondo, `surface`.
+  final Color logoRueda;
+
   static const claro = ColoresApp(
     racha: Color(0xFFE53935),
     rachaContenedor: Color(0xFFFDE7E5),
@@ -42,6 +47,7 @@ class ColoresApp extends ThemeExtension<ColoresApp> {
     botonTexto: Color(0xFFA63A0B),
     avisoRecord: Color(0xFFFFB020),
     onAvisoRecord: Color(0xFF1F1A17),
+    logoRueda: Color(0xFF1F1A17),
   );
 
   static const oscuro = ColoresApp(
@@ -51,6 +57,7 @@ class ColoresApp extends ThemeExtension<ColoresApp> {
     botonTexto: Color(0xFFFFB59A),
     avisoRecord: Color(0xFFFFB020),
     onAvisoRecord: Color(0xFF1F1A17),
+    logoRueda: Color(0xFFFFF8F3),
   );
 
   @override
@@ -61,6 +68,7 @@ class ColoresApp extends ThemeExtension<ColoresApp> {
     Color? botonTexto,
     Color? avisoRecord,
     Color? onAvisoRecord,
+    Color? logoRueda,
   }) {
     return ColoresApp(
       racha: racha ?? this.racha,
@@ -69,6 +77,7 @@ class ColoresApp extends ThemeExtension<ColoresApp> {
       botonTexto: botonTexto ?? this.botonTexto,
       avisoRecord: avisoRecord ?? this.avisoRecord,
       onAvisoRecord: onAvisoRecord ?? this.onAvisoRecord,
+      logoRueda: logoRueda ?? this.logoRueda,
     );
   }
 
@@ -82,6 +91,7 @@ class ColoresApp extends ThemeExtension<ColoresApp> {
       botonTexto: Color.lerp(botonTexto, other.botonTexto, t)!,
       avisoRecord: Color.lerp(avisoRecord, other.avisoRecord, t)!,
       onAvisoRecord: Color.lerp(onAvisoRecord, other.onAvisoRecord, t)!,
+      logoRueda: Color.lerp(logoRueda, other.logoRueda, t)!,
     );
   }
 }
