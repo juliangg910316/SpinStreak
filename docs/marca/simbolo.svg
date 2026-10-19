@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="108" height="108" viewBox="0 0 108 108">
+  <!--
+    Símbolo de Rueda Viva (spec 006): rueda de bici con 7 radios y la llama
+    de la racha como buje. Lienzo de 108 × 108 (icono adaptativo de Android).
+    Geometría copiada del componente "Icono" del diseño de referencia.
+
+    tool/generar_iconos.sh sustituye el viewBox y los tres colores marcados
+    (fondo #FFF8F3, rueda #1F1A17 y llama #FF5A1F) para cada variante. El
+    contorno y el recorte de la llama son máscaras (transparentes), no
+    pintura del color del fondo: así sirven también con fondo transparente
+    (monocromo de Android e icono oscuro de iOS).
+  -->
+  <defs>
+    <!-- Llama en coordenadas propias: se traslada a (54, 57,5) y se escala 0,78. -->
+    <path id="llama" d="M2 -26C6 -16 16 -10 16 2C16 12 9 18 0 18C-9 18 -16 12 -16 3C-16 -5 -11 -10 -7 -15C-6 -10 -4 -7 -1 -6C-2 -13 -1 -20 2 -26Z"/>
+    <path id="corte" d="M1 -3C3 2 7.5 4.5 7.5 8.5C7.5 11.5 4.5 13.5 0.5 13.5C-3.5 13.5 -6.5 11.5 -6.5 8.5C-6.5 5 -2 2.5 1 -3Z"/>
+    <!-- Quita de la rueda la llama y su contorno (trazo 7). -->
+    <mask id="sin-llama" maskUnits="userSpaceOnUse" x="0" y="0" width="108" height="108">
+      <rect width="108" height="108" fill="white"/>
+      <use href="#llama" transform="translate(54 57.5) scale(0.78)" fill="black" stroke="black" stroke-width="7" stroke-linejoin="round"/>
+    </mask>
+    <!-- Quita de la llama su recorte interior. -->
+    <mask id="sin-corte" maskUnits="userSpaceOnUse" x="0" y="0" width="108" height="108">
+      <rect width="108" height="108" fill="white"/>
+      <use href="#corte" transform="translate(54 57.5) scale(0.78)" fill="black"/>
+    </mask>
+  </defs>
+
+  <rect id="fondo" width="108" height="108" fill="#FFF8F3"/>
+
+  <!-- Cubierta (r 24) y radios (de r 5 a r 21,5; el primero a −90° + 360/14). -->
+  <g mask="url(#sin-llama)" fill="none" stroke="#1F1A17">
+    <circle cx="54" cy="54" r="24" stroke-width="6.5"/>
+    <path stroke-width="3.4" stroke-linecap="round" d="M56.17 49.50L63.33 34.63M58.87 52.89L74.96 49.22M57.91 57.12L70.81 67.41M54.00 59.00L54.00 75.50M50.09 57.12L37.19 67.41M49.13 52.89L33.04 49.22M51.83 49.50L44.67 34.63"/>
+  </g>
+
+  <!-- La máscara va en un grupo sin transform: se aplica en el lienzo de 108. -->
+  <g mask="url(#sin-corte)">
+    <use href="#llama" transform="translate(54 57.5) scale(0.78)" fill="#FF5A1F"/>
+  </g>
+</svg>
