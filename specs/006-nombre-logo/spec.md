@@ -1,5 +1,5 @@
 # Spec 006 — Nombre y logo de la app
-Estado: aprobada
+Estado: implementada
 
 ## Contexto y objetivo
 La app se llama provisionalmente "SpinStreak" y usa el icono por defecto de Flutter. Esta spec le da un nombre y un logo propios, elegidos por el autor el 2026-10-19 entre tres opciones del diseño de referencia: **Rueda Viva**, con el logo de la rueda de bici. La rueda es la bici y "viva" es la racha que se mantiene encendida pedaleando cada día. El nombre en español se pronuncia y se escribe sin dudas, y no choca con apps conocidas como "Streaks".
