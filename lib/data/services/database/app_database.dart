@@ -43,7 +43,17 @@ class AppDatabase extends _$AppDatabase {
   /// Sin [executor] abre la base de datos del dispositivo. En tests se puede
   /// pasar `NativeDatabase.memory()`.
   AppDatabase([QueryExecutor? executor])
-    : super(executor ?? driftDatabase(name: 'spinstreak'));
+    : super(
+        executor ??
+            driftDatabase(
+              name: 'spinstreak',
+              // Demo web: los datos se guardan en el navegador (OPFS o IndexedDB).
+              web: DriftWebOptions(
+                sqlite3Wasm: Uri.parse('sqlite3.wasm'),
+                driftWorker: Uri.parse('drift_worker.js'),
+              ),
+            ),
+      );
 
   /// Historial de versiones:
   /// - 1: esquema inicial.
